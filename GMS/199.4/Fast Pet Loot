@@ -1,0 +1,55 @@
+//UNTESTED
+[ENABLE]
+alloc(GetItemXY,128)
+alloc(ItemX,4)
+alloc(ItemY,4)
+registersymbol(ItemX)
+registersymbol(ItemY)
+
+Alloc(Hook,128)
+Label(Return)
+label(exit)
+
+GetItemXY:
+mov [ItemX],eax
+call 0085A4D0
+mov [ItemY],eax
+ret
+
+01177966:
+call GetItemXY
+
+Hook:
+mov edi,ecx
+push ecx
+mov ecx,[034D20BC] //E8 ? ? ? ? 85 C0 74 ? 8B 0D ? ? ? ? 8D ? ? ? 00 00 ? 8D [mov below]
+cmp [ecx+14],#0
+pop ecx
+je exit
+push [ItemY]
+push [ItemX]
+lea ecx,[ebx+10]
+call 00E88F40 //IWzShape2D::Move 55 8B EC 56 57 FF 75 ? 8B ? FF 75 ? 57 8B 07 FF ? ? 8B F0 [FIRST]
+exit:
+mov ecx,ebx
+call 00CD8710
+jmp Return
+
+018066AD:
+jmp Hook
+Return:
+
+
+[DISABLE]
+01177950: //55 8b ? ? ? 8b ? 8d ? ? e8 ? ? ? ? 8b ? ? 8b ? 89 ? e8 [2nd call below] 
+call 0085A4D0
+
+018066D5: // 7E ? 85 FF 74 ? 8B ? E8 ? ? ? ? EB (call below)
+call 00CD8710
+
+
+dealloc(ItemHook)
+dealloc(ItemX)
+dealloc(ItemY)
+unregistersymbol(ItemX)
+unregistersymbol(ItemY)
