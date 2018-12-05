@@ -1,0 +1,11 @@
+[Enable]
+//Moopler - OuterHaven
+//CUser::IncFlameOrbCount
+//1st Job BW can spam the same amount of orbs a 4th job BW can.
+
+0243B768: // E8 ? ? ? ? 83 C4 04 85 C0 74 ? 8B CE E8 ? ? ? ? 8B 06
+db EB 03
+
+[Disable]
+0243B768:
+db EB 03
