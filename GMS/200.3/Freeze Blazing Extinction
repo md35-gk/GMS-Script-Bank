@@ -1,0 +1,8 @@
+[Enable]
+// E8 ? ? ? ? FF B3 ? ? 00 00 E8 ? ? ? ? 83 C4 04 85 C0 0F 84
+0154B2AB:
+db 90 90 90 90 90
+
+[Disable]
+0154B2AB:
+call 00D2A8E0

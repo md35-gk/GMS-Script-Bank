@@ -1,0 +1,7 @@
+[ENABLE]
+012D3FA6:
+mov eax,1
+
+[DISABLE]
+012D3FA6: // E8 ? ? ? ? 83 C4 ? C3 CC E8 ? ? FF FF 50 E8 ? ? ? FF 83 C4 ? C3 CC E8 ? ? FF FF 50 [FIRST]
+call 009B4DA0 // update

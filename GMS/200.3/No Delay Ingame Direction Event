@@ -1,0 +1,7 @@
+[Enable]
+01564CAA: //78 ? 8B 46 08 6A 00
+db 90 90
+
+[Disable]
+01564CAA:
+db 78 71

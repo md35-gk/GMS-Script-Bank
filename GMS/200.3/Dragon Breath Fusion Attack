@@ -1,0 +1,8 @@
+[enable]
+012195BE:
+db 0F 84
+
+[disable]
+012195BE: //0f 85 ? ? ? ? ff 15 ? ? ? ? 8b c3
+db 0F 85
+ 
