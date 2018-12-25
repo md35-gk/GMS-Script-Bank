@@ -1,0 +1,8 @@
+define(SlideAndAttack, 00D4D0A1) // 74 0F 8B ? E8 ? ? ? ? 85 C0 0F 84 ? 00 00 00 8B 5D ? 8B CB E8 ? ? ? ?
+[ENABLE]
+SlideAndAttack:
+db 90 90
+
+[DISABLE]
+SlideAndAttack:
+db 74 0F

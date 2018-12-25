@@ -1,0 +1,97 @@
+[enable]
+define(KEY_NORMAL,0)
+define(KEY_EXTENDED,1)
+
+define(VK_CONTROL,11)
+define(VK_RSHIFT,A1)
+define(VK_INSERT,2D)
+define(VK_DELETE,2E)
+define(VK_HOME,24)
+define(VK_END,23)
+define(VK_PRIOR,21)
+define(VK_NEXT,22)
+
+define(_HoldAttack,0) //Set flag to 1 for combos, 0 for normal attacks
+define(_AttackKey,%arg1) //Choose your key here after defining vk code
+define(_AttackKeyType,KEY_EXTENDED)
+define(_AttackDelay,%arg2) //Set delay in milliseconds
+
+alloc(AutoAttack,512)
+alloc(PressKey,128)
+alloc(HoldAttack,1)
+alloc(AttackDelay,4)
+label(Exit)
+
+define(KEY_PRESS,0)
+define(KEY_UP,1)
+define(MAPVK_VK_TO_VSC,0)
+
+AttackDelay:
+dd 0
+
+PressKey:
+push ebx
+push edx
+push esi
+push ecx
+mov edx, [esp+10+4]
+mov esi, [esp+10+8]
+mov ebx, [esp+10+C]
+mov ecx, edx
+push MAPVK_VK_TO_VSC
+push ecx
+call MapVirtualKeyA
+shl eax,#16
+shl esi,#24
+shl ebx,#31
+or eax, esi
+or eax, ebx
+mov ecx,eax
+push ecx
+push edx
+call 02927230 //55 8B EC 8B 0D ? ? ? ? 85 C9 74 ? 83 C1 04 8B 01 5D FF 20
+pop ecx
+pop esi
+pop edx
+pop ebx
+ret 000C
+
+AutoAttack:
+cmp dword ptr [esp],02654EC8 //8D 90 ?? ?? ?? ?? 83 ? ? 72 ? 3D D2 07 00 00 75 ? 80
+pushad
+jne Exit
+test eax,eax
+je Exit
+test eax,eax
+inc [AttackDelay]
+cmp [AttackDelay],_AttackDelay
+jne Exit
+mov [AttackDelay],0
+push KEY_PRESS
+push _AttackKeyType
+push _AttackKey
+call PressKey
+cmp byte ptr [HoldAttack], 1
+je Exit
+nop
+push KEY_UP
+push _AttackKeyType
+push _AttackKey
+call PressKey
+jmp Exit
+
+Exit:
+popad
+jmp 025AB0E0
+
+031C1C4C:
+dd AutoAttack
+
+[disable]
+031C1C4C: // 4 Byte Scan 
+dd 025AB0E0 //55 8B EC 6A FF 68 ? ? ? ? 64 A1 00 00 00 00 50 83 EC 08 56 A1 ? ? ? ? 33 C5 50 8D ? ? 64 A3 00 00 00 00 8B 0D ? ? ? ? 85 C9 74 ? 8D
+
+dealloc(AutoAttack)
+dealloc(PressKey)
+dealloc(HoldAttack)
+dealloc(AttackDelay)

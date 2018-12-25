@@ -1,0 +1,9 @@
+define(FinalSmash,02597DD6) //74 ? 0F 1F ? ? 00 00 00 00 FF (second)
+
+[Enable]
+FinalSmash:
+db 75
+
+[Disable]
+FinalSmash:
+db 74

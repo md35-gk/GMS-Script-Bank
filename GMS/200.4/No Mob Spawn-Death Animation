@@ -1,0 +1,16 @@
+define(noSpawnAni, 0170A5A4) //  0F 8E ?? ?? 00 00 8B ? 33 ? E8
+define(CMob_OnDie, 016FCD00)//   55 8B EC 6A FF 68 ? ? ? ? 64 A1 00 00 00 00 50 81 EC F0 00 00 00 53 ? 57 A1 ? ? ? ? 33 C5 50 8D 45 ? 64 A3 00 00 00 00 8B
+
+[ENABLE]
+noSpawnAni:
+db 90 90 90 90 90 90
+
+CMob_OnDie:
+ret
+
+[DISABLE]
+noSpawnAni:
+db 0F 8E 13 02 00 00
+
+CMob_OnDie:
+push ebp

@@ -1,0 +1,55 @@
+define(delay,#%arg1) // Adjust delay its very possible due to ping/lag you might lose the potential you want
+[Enable]
+Alloc(Hook,128)
+Label(Return)
+Label(Exit)
+Label(ResetAbility) 
+alloc(timer,4)
+
+Hook:
+mov ecx,[036B1D4C] // TSingleton::CWvsContext 8B 0D ?? ?? ?? ?? 50 E8 ?? ?? ?? ?? 8D 4D ?? E8 ?? ?? ?? ?? 8B 4D ?? 64 89 0D ?? ?? ?? ?? 59
+pushad
+call 029D9E60 // CWvsContext::GetCharacterPotentialGrade E8 ? ? ? ? 6A 00 83 F8 01 0F 8D (address in call)
+cmp eax,3 //Legendary
+je Exit
+
+call 027706C0 // get_update_time: e8 ? ? ? ? 8b 0d ? ? ? ? 8b d8 8d 45 ? 50 e8 ? ? ? ? 8b 7d (address in call)
+mov edx,eax
+sub edx,[timer]
+cmp edx,delay
+jl Exit
+mov [timer],eax
+
+ResetAbility:
+mov ecx,[036B1D4C] // TSingleton::CWvsContext
+push 00
+push 00
+push 00
+push 00
+call 02A4E090 // E8 ? ? ? ? 83 C4 04 E9 ? ? ? ? 68 ? ? 00 00 8d ? ? E8 ? ? ? ? FF 75 08 [function start]
+
+Exit:
+popad
+jmp Return
+
+0255FDB3: // 56 8B F1 8B 0D ? ? ? ? E8 ? ? ? ? 85 C0 75 02 [address of mov ecx below]
+jmp Hook
+nop
+Return:
+
+02A4E265: // "Auto Yes" E8 ? ? ? ? 83 C4 1C 83 F8 06 0F 95 ? ? 8B [4th from last]
+mov eax,6
+
+02664220: // "No Reset Prompt" 6A 00 6A 00 6A 00 0FB6 C0 50 [FUNCTION START]
+ret 4
+
+[Disable]
+0255FDB3:
+mov ecx,[036B1D4C]
+
+02A4E265:
+call 02793050
+
+02664220:
+push ebp
+mov ebp,esp

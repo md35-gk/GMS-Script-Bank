@@ -1,0 +1,25 @@
+[ENABLE]
+alloc(Teleport,256)
+label(Teleport_End)
+
+CreateThread(Teleport)
+
+Teleport:
+mov esi,[036D7808] // CUserLocal: 8B 3D ? ? ? ? 8B CF F3 [address inside brackets]
+lea ecx,[esi+04]
+mov eax,[esi+04]
+mov eax,[eax+20]
+call eax
+test eax,eax
+je Teleport_End
+push #%arg1 // Y
+push #%arg2 // X
+push 00
+mov ecx,eax
+call 00D2C550 // 55 8B EC ? ? 10 ? FF ? 10 8D ? 10 FF ? 0C 56 FF 50 40 85 C0 79 0C 68 ? ? ? ? ? ? E8 ? ? ? ? 5E [first]
+
+Teleport_End:
+ret
+
+[DISABLE]
+dealloc(Teleport)
