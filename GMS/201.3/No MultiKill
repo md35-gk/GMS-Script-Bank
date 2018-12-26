@@ -1,0 +1,7 @@
+[enable]
+031D371C:
+ret
+
+[disable]
+031D371C: // String search Effect/BasicEff.img/MultiKill/ [First]
+db 45

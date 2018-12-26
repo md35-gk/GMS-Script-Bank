@@ -1,0 +1,9 @@
+define(CFlameBallAttack_UpdateFlameBallAttack,0150D310) //55 8B ? 6A ? 68 ? ? ? ? 64 A1 ? ? ? ? 50 83 ? ? A1 ? ? ? ? 33 ? 89 ? ? 53 56 57 50 8D ? ? 64 A3 ? ? ? ? 8B ? 8B ? ? 8B ? 2B
+[Enable]
+CFlameBallAttack_UpdateFlameBallAttack:
+ret 0010
+
+[Disable]
+CFlameBallAttack_UpdateFlameBallAttack:
+push ebp
+mov ebp,esp

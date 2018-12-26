@@ -1,0 +1,9 @@
+//7E ? 83 ? ? 7D ? 8B ? ? 2B C2 3D 6A FF FF FF 7E ? 3D 96 00 00 00 7D ? 8B ? ? 3B ? ? 7C ?
+define(UnlimitedAttack, 026C6FE1) // 1st jle from int CAntiRepeat::TryRepeat(long,long)
+[Enable]
+UnlimitedAttack:
+db EB
+
+[Disable]
+UnlimitedAttack:
+db 7E

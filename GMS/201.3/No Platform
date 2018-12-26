@@ -1,0 +1,7 @@
+[Enable]
+016738D3: //E8 ? ? ? ? 8B ? 8B ? 6A 01 FF 50 ? 8B CE E8 ? ? ? ? 8B CE E8 ? ? ? ? 6A 00
+db 90 90 90 90 90
+
+[Disable]
+016738D3:
+call 01679BE0

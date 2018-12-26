@@ -1,0 +1,7 @@
+[ENABLE]
+0124346F:
+db F2 0F 5E
+
+[DISABLE]
+0124346F: // F2 ? ? ? ? ? ? ? 3B ? 7F [first]
+db F2 0F 59

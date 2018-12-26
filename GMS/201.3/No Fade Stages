@@ -1,0 +1,15 @@
+define(removeFadeIn, 01A2D0FF) // 0F 84 ? ? ? ? 8B 35 ? ? ? ? 85 F6 74 ? 8B CE E8 ? ? ? ? 84
+define(removeFadeOut, 01A2D75F) // 0F 84 ? ? 00 00 8B 1D ? ? ? ? 89 ? ? 85 DB 74
+[ENABLE]
+removeFadeIn: // CStage::FadeIn
+db 90 E9
+
+removeFadeOut: // CStage::FadeOut
+db 90 E9
+
+[DISABLE]
+removeFadeIn:
+db 0F 84 13 06 00 00
+
+removeFadeOut:
+db 0F 84 19 0D 00 00

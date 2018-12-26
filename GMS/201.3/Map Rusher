@@ -1,0 +1,84 @@
+[Enable]
+Alloc(InGameRush, 128)
+Alloc(TeleportToPortal, 128)
+
+Label(Return)
+Label(End)
+
+0255D30F: //89 ? ? ? ? ? 81 ? ? ? ? ? 3F 42 0F 00 75
+jmp InGameRush
+db 90
+Return:
+
+InGameRush:
+push eax
+call TeleportToPortal
+mov [edi+00015718],eax
+jmp Return
+
+TeleportToPortal:
+push ebp
+mov ebp, esp
+push esi
+mov esi,[ebp+08]
+test esi, esi
+js End
+mov ecx,[036D9808] // CUserLocal 8B 3D ? ? ? ?  8B CF F3
+mov [ecx+00016484],1 // AutoPortal  89 81 ? ? ? 00 5D C2 04 00 8B 81 ? ? ? 00 C3 CC CC CC CC CC CC CC CC CC C7
+mov ecx,[036DBD7C] // PortalBase 8B 3D ?? ?? ?? ?? 8B 47 ?? 85 C0
+mov eax,0191E8C0 //CPortalList::GetPortal() Two calls Down OR 55 8B EC 8B ? 08 85 D2 78 ? 8B ? 04 85 C0 74 ? 3B ? ? 73 ? 8B
+push esi
+xor edx, edx
+call eax
+test eax, eax
+je End
+push [eax+4]
+mov ecx,[036D9808] // CUserLocal 8B 3D ? ? ? ?  8B CF F3
+mov [ecx+00016484],1 // AutoPortal  75 07 8B CE E8 ? ? ? ? 6A 00 8B CE E8 ? ? ? ? 5E
+mov eax,02649220 //CUserLocal::MoveToPortal() 55 8B EC 6A 00 6A 01 6A 00 6A 01 FF ? ? 6A 00
+xor edx, edx
+call eax
+End:
+mov eax, esi
+pop esi
+pop ebp
+ret 0004
+
+ //Fix to Maprusher getting "stuck" i.e quest requirement map like T.O.T or Cygnus Garden
+//0242E706: //  0F 84 ? ? 00 00 89 87 ? ? ? ? 85
+//db 90 90 90 90 90 90
+
+//Fix to Maprusher getting "stuck"
+0255D2F4: //  75 ? 8B 0D ? ? ? ? 8D 87 [SECOND]
+db 90 90
+
+00D5A41F: // 1st result 6A ?? E8 ?? ?? ?? ?? 8B ?? E8 ?? ?? ?? ?? C7 ?? ?? ?? ?? ?? ?? 8D ?? ??
+db 90 90 90
+db 90 90 90
+db 90 90 90 90
+db 90 90 90 90
+
+00D58E90: //  1st result 75 ? E8 ? ? ? ? 85 C0 74 ? 6A 01
+db 90 90
+
+[Disable]
+DeAlloc(InGameRush)
+DeAlloc(TeleportToPortal)
+
+0255D30F:
+mov [edi+00015718],eax
+
+//0242E686:
+//db 0F 84 D6 05 00 00
+
+0255D2F4:
+db 75 1F
+
+00D5A41F:
+push 00
+call 00D5E870
+mov ecx,eax
+call 02677630
+
+00D58E90:
+db 75 2C

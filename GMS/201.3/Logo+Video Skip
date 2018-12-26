@@ -1,0 +1,8 @@
+define(skipLogoAndVideo, 01665D24) //0F 84 ? ? 00 00 E9 ? ? 00 00 CC 55
+[Enable]
+skipLogoAndVideo: //LOGO + VIDEO SKIP
+db 90 90 90 90 90 90
+
+[Disable]
+skipLogoAndVideo:
+db 0F 84 66 17 00 00

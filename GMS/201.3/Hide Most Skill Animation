@@ -1,0 +1,16 @@
+define(CMob_ShowHitEffect,0172ACC0)      // 57 8B F9 E8 ? ? ? ? 50 E8 ? ? 00 00 83 C4 04
+define(CUser_ShowSkillEffect,02508F90)   // 6A 00 6A 00 6A 00 68 FF FF FF 7F 6A 00 6A 06 56 F2 [follow call below]
+
+[enable]
+CMob_ShowHitEffect:
+ret 0004
+
+CUser_ShowSkillEffect:
+ret 0040
+
+[disable]
+CMob_ShowHitEffect:
+db 57 8B F9
+
+CUser_ShowSkillEffect:
+db 55 8B EC

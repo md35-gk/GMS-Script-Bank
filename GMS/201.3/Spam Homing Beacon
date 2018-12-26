@@ -1,0 +1,21 @@
+[enable]
+Alloc(Hook,32)
+Label(Return)
+
+Hook:
+mov [esi+0001649C],#35101002
+mov eax,[esi+0001649C] //nSkillID Offset
+jmp Return
+
+//CUserLocal::TryDoingReservedSkill
+026F7F09: //8B ? ? ? ? ? 85 C0 0F 84 ? ? 00 00 50 E8 ? ? ? ? 83 C4 04 84 C0
+jmp Hook
+nop
+
+Return:
+
+[disable]
+026F7F09:
+mov eax,[esi+0001649C]
+
+dealloc(hook)

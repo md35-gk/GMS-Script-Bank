@@ -1,0 +1,8 @@
+[ENABLE]
+025B4828:
+db 90 90
+
+[DISABLE]
+// inside CUserLocal::FallDown
+025B4828: //74 ? 8B CB C7 83 ? ? ? ? 01 00 00 00 E8 ? ? ? ? 85 C0 75 ? 89 B3 ? ? ? ? EB ? 8B CB E8 ? ? ? ? 89 83 ? ? ? ? 6A 01
+db 74 5A

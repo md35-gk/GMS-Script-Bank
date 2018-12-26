@@ -1,0 +1,10 @@
+//do not spawn too many or you will get hack detected message
+
+[Enable]
+01327EA0: //Unlimited Arrow Platter
+ret 004
+
+[Disable]
+01327EA0: // [FUNCTON START] 0F 8E ? ? 00 00 8B CE E8 ? ? ? ? 50 89
+push ebp
+mov ebp,esp

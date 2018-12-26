@@ -1,0 +1,35 @@
+[ENABLE]
+//Created by DBLmao
+alloc(Hook,100)
+label(Return)
+label(Original)
+
+Hook:
+push eax
+mov eax,[036E07B0] //8B 0D ? ? ? ? 8D 85 ? FF FF FF 6A 00 6A 00 [FIRST] CHECK SECOND
+cmp [eax+10],00
+pop eax
+jle Original
+mov [esi+00016E24],#42120003 // [offset from below]
+mov [esi+00016E24+4],#55 // [offset from below]
+
+Original:
+cmp dword ptr [esi+00016E24],00 // [offset from below]
+jmp Return
+
+02717E0E: //83 BE ? ? ? ? 00 0F 84 ? ? 00 00 2B 86 ? ? ? ? 0F 88 ? ? 00 00 8B
+jmp Hook
+db 90 90
+Return:
+
+026F1D78: //74 ? 8B ? ? 3B ? ? 7C ? 8B ? ? ? ? ? 53 E8 ? ? ? ? [JL BELOW]
+db 90 90
+
+[DISABLE]
+02717E0E:
+cmp dword ptr [esi+00016E24],00 //[update offset in brackets as well]
+
+026F1D78:
+db 7C 35
+
+dealloc(Hook)
