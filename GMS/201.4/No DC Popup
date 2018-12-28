@@ -1,0 +1,29 @@
+define(CLoginUtilDlg__Error,01616650) //55 8B EC 6A FF 68 ? ? ? ? 64 A1 ? ? ? ? 50 83 EC 10 53 56 57 A1 ? ? ? ? 33 C5 50 8D 45 F4 64 A3 ? ? ? ? 8B 0D ? ? ? ? 85 C9 0F 84
+[Enable]
+alloc(CLoginUtilDlg__Error_Hook,128)
+label(Skip)
+
+CLoginUtilDlg__Error_Hook:
+push ebp
+mov ebp,esp
+cmp [ebp+08],17 // int nMsg
+je Skip
+push ebp // Original Opcodes
+mov ebp,esp // Original Opcodes
+push -01 // Original Opcodes
+jmp CLoginUtilDlg__Error+5
+
+Skip:
+pop ebp
+ret
+
+CLoginUtilDlg__Error:
+jmp CLoginUtilDlg__Error_Hook
+
+[Disable]
+CLoginUtilDlg__Error:
+push ebp
+mov ebp,esp
+push -01
+
+dealloc(CLoginUtilDlg__Error_Hook)

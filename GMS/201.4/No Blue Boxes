@@ -1,0 +1,7 @@
+[ENABLE]
+02794F00: //No Blue Box (so you don't crash on rope/etc)
+ret
+
+[DISABLE]
+02794F00: //55 8B EC 6A FF 68 ? ? ? ? 64 A1 00 00 00 00 50 83 EC ? 53 56 57 A1 ? ? ? ? 33 C5 50 8D ? ? 64 A3 00 00 00 00 C7 ? ? 00 00 00 00 E8 ? ? ? ? 83 7D ? 00 75 ?
+push ebp

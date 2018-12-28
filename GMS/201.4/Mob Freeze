@@ -1,0 +1,21 @@
+[ENABLE]
+alloc(CMob__IsRisingByToss_Hook,128)
+label(Return_True)
+
+CMob__IsRisingByToss_Hook:
+je Return_True
+jmp 017320B0+7
+
+Return_True:
+mov eax,00000001
+ret
+
+017320B0: // CMob::IsRisingByToss
+jmp CMob__IsRisingByToss_Hook
+db 90 90
+
+[DISABLE]
+017320B0: //83 B9 ? ? ? ? 00 75 ? 83 B9 ? ? ? ? 00 74 ? 8B 89 ? ? ? ? 8D ? ? F7 D9 1B C9 23 C8 E8 ? ? ? ? 85 C0 75 ?
+cmp dword ptr [ecx+00000A68],00
+
+dealloc(CMob__IsRisingByToss_Hook)

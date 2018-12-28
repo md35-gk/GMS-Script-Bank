@@ -1,0 +1,10 @@
+define(Address,016FCE40) //Function start push ebp: 55 8B EC 6A FF 68 ? ? ? ? 64 A1 00 00 00 00 50 83 EC ? 53 56 57 A1 ? ? ? ? 33 C5 50 8D 45 ? 64 A3 00 00 00 00 8B F9 89 ? ? 8B ? ? ? ? ? C7 ? ? ? ? ? ? 85 ? 74
+//FF ? ? ? ? ? E8 ? ? ? ? 8B ? ? 50 C6 ? ? ? E8 ? ? ? ? C6 <-- If using this one, Offset + 5 then follow call to find offset
+[Enable]
+Address:
+ret 0074
+
+[Disable]
+Address:
+push ebp
+mov ebp,esp

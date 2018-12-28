@@ -1,0 +1,7 @@
+[Enable]
+0167390E: //FF 50 ? 8B CE E8 ? ? ? ? 8B CE E8 ? ? ? ? 6A 00
+db 90 90 90
+
+[Disable]
+0167390E:
+call dword ptr [eax+1C]

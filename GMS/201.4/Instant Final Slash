@@ -1,0 +1,10 @@
+//Uses the final part of the "Enchanced Lash"/Demon Awakening skill for Demon slayers.
+//Required:5th job
+
+[Enable]
+025E1AEF:
+push 17D7AF0A
+
+[Disable]
+025E1AEF: //68 C4 05 D9 01 FF
+push 01D905C4

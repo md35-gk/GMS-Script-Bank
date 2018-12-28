@@ -1,0 +1,38 @@
+//not working
+
+[ENABLE]
+alloc(hook,128)
+label(return)
+
+hook:
+mov [esp+4],#9 //nAction
+mov [esp+14],#17 //nMoveType
+mov [esp+38],#1 //bAirhit
+
+//Vac to Char X
+mov eax,[036D9808] //CUserLocal: 8B 3D ? ? ? ?  8B CF F3
+mov eax,[eax+163B8] //Character X Location Offset: 8d 86 ? ? ? ? 8b cf 50 e8 ? ? ? ? 5f 5e 5b
+add eax,#%arg1 //Adjust X
+mov [esp+18],eax //nMoveEndingX
+
+//Vac to Char Y
+mov eax,[036D9808] //CUserLocal: 8B 3D ? ? ? ?  8B CF F3
+mov eax,[eax+163B8+4] //Character X Location Offset+4: 8d 86 ? ? ? ? 8b cf 50 e8 ? ? ? ? 5f 5e 5b
+add eax,#%arg2 //Adjust Y
+mov [esp+1C],eax //nMoveEndingY
+//Original Opcodes
+push ebp
+mov ebp,esp
+push -01
+jmp return
+
+// [NEW AOB] 81? EB 20 42 01 74 ? 81 ? 02 1D 42 01 74[FUNCTION START]
+0172E570: //  55 8B EC 6A FF 68 ? ? ? ? 64 A1 00 00 00 00 50 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 ? 53 ? ? 50 8D 45 F4 64 A3 00 00 00 00 8B F9 89 BD 3C FF FF FF
+jmp hook
+return:
+
+[DISABLE]
+0172E570:
+push ebp
+mov ebp,esp
+push -01
