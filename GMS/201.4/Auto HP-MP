@@ -1,0 +1,75 @@
+[Enable]
+alloc(HP,4)
+alloc(MP,4)
+alloc(CheckHP,128)
+alloc(CheckMP,128)
+alloc(PressKey,128)
+label(HPReturn)
+label(MPReturn)
+
+define(HP_Value,#%arg1) //Define HP Trigger Here (Do not remove # tag)
+define(MP_Value,#%arg2) //Define MP Trigger Here (Do not remove # tag)
+define(HealthKey, %arg3) //HP Key
+define(ManaKey, %arg4) //MP Key
+
+HP:
+dd HP_Value
+MP:
+dd MP_Value
+
+CheckHP:
+mov [edi+00000214],esi
+cmp esi,[HP]
+jg HPReturn
+pushad
+mov edx,HealthKey
+call PressKey
+popad
+jmp HPReturn
+
+CheckMP:
+mov [ebx+00000214],esi
+cmp esi,[MP]
+jg MPReturn
+pushad
+mov edx,ManaKey
+call PressKey
+popad
+jmp MPReturn
+
+022EC41B:
+jmp CheckHP
+db 90
+HPReturn:
+
+022ECA10:
+jmp CheckMP
+db 90
+MPReturn:
+
+PressKey:
+mov esi,[036B3D4C] // TSingletonCWvsContext
+/*
+Mem Search Addy 55 8B EC 56 8B F1 E8 ? ? F7 FF F6 45 08 01 74 0E 68 ? ? 00 00 56 E8 ? ? ? 00 83 C4 08 8B C6 5E 5D C2 0400
+4 Byte Scan Result Addy. Green Result
+4 Byte Scan Result Addy. Black Result
+4 Byte Scan Result Addy. Green Result
+*/
+mov ecx,[esi+A4]
+push edx
+push 00
+call 029292E0 // CWndMan::OnKey 55 8B EC 8B 0D ?? ?? ?? ?? 85 C9 74 ?? 83 C1 ?? [First]
+ret
+
+[disable]
+022EC41B: // Addy that accesses UI HP Value //
+mov [edi+00000214],esi
+022ECA10: // Addy that accesses UI MP Value //
+mov [ebx+00000214],esi
+dealloc(HP)
+dealloc(MP)
+dealloc(CheckHP)
+dealloc(CheckMP)
+dealloc(UseHP)
+dealloc(UseMP)
+dealloc(PressKey)
