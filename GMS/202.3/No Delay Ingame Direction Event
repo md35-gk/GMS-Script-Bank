@@ -1,0 +1,7 @@
+[Enable]
+0154E6CA: //78 ? 8B 46 08 6A 00
+db 90 90
+
+[Disable]
+0154E6CA:
+db 78 71

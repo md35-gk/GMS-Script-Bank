@@ -1,0 +1,9 @@
+//warning: combining this with certain CPU hacks (e.g. no skill animations, ..) may cause auto bans!
+
+[enable]
+00CBA567:
+db F2 0F 59
+
+[disable]
+00CBA567: // F2 ? ? ? ? ? ? ? 66 ? ? ? F2 ? ? ? ? ? F6
+db F2 0F 5E

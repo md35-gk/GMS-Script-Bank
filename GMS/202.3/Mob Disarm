@@ -1,0 +1,10 @@
+[ENABLE]
+016F0BDF: //75 ? 8D ? ? 8B ? E8 ? ? ? ? 8B ? E8
+jmp 016F1275 //8B ? ? ? ? ? 85 C0 0F 84 ? ? 00 00 2B ? 0F 89 ? ? ? ? C7 ? ? 00 00 00 00 8D
+//backtrack from jmp above
+
+[DISABLE]
+016F0BDF:
+db 75 0A 8D 50 FA
+mov ecx, ebx
+call 01759400 //update call as well

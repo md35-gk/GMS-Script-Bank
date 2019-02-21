@@ -1,0 +1,58 @@
+[Enable]
+Alloc(Hook,123)
+Label(Function)
+Label(Return)
+Label(Increase)
+Label(Decrease)
+Label(Reset)
+Label(Exit)
+
+Alloc(value,4)
+value:
+dd #1000 //Default value
+
+Hook:
+pushad
+cmp ebx,004E0000 //Numpad +
+je Increase
+cmp ebx,004A0000 //Numpad -
+je Decrease
+cmp ebx,00370000 //Numpad *
+je Reset
+Exit:
+popad
+mov ecx,[036CBCB0] //Orignial
+jmp Return
+
+Increase:
+add [value],#20
+jmp Function
+
+Decrease:
+sub [value],#20
+jmp Function
+
+Reset:
+mov [value],#1000
+
+Function: // 3D 89 13 00 00 75 ? A1
+mov eax, [036D1E90]
+test eax,eax
+je Exit
+mov ecx,[eax]
+push [value]
+push eax
+call dword ptr [ecx+000000B0]
+jmp Exit
+
+0291DD43:
+jmp Hook
+db 90
+Return:
+
+[Disable]
+0291DD43: //8B 0D ? ? ? ? 85 C9 74 ? 83 C1 04 8B 01 5D FF 20
+mov ecx,[036CBCB0] //Original
+
+
+dealloc(hook)

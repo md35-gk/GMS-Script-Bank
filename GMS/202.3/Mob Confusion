@@ -1,0 +1,7 @@
+[ENABLE]
+0283B286: //Mob Confuse
+db 90 90 90 90 90 90 
+
+[DISABLE]
+0283B286: //0F 82 ? ? 00 00 EB 03 ? ? ? F2 [second]
+db 0F 82 7D 08 00 00
