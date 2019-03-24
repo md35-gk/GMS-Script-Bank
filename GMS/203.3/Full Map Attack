@@ -1,0 +1,14 @@
+[ENABLE]
+017EE0E9: // MsInterSectRect
+db EB
+
+02AE1776: // No Level Up Damage
+db EB
+
+[DISABLE]
+017EE0E9: // 75 ? E9 ? ? FF FF 8B ? ? E8 ? ? 00 00 8B ? ? 8B
+db 75
+
+02AE1776: //  74 ? C7 87 ? ? 00 00 00 00 00 00 8B 0D
+//68 EA BA C4 04 FF [2 je above]
+db 74

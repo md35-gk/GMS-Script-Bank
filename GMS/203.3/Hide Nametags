@@ -1,0 +1,7 @@
+[enable]
+02575C50: //CUser:DrawNameTags
+ret
+
+[disable]
+02575C50: //6A 00 6A 00 68 F3 03 [FUNCTION START]
+push ebp

@@ -1,0 +1,10 @@
+[ENABLE]
+0177B3DC: //75 ? 8D ? ? 8B ? E8 ? ? ? ? 8B ? E8
+jmp 0177BA59 //8B ? ? ? ? ? 85 C0 0F 84 ? ? 00 00 2B ? 0F 89 ? ? ? ? C7 ? ? 00 00 00 00 8D
+//backtrack from jmp above
+
+[DISABLE]
+0177B3DC:
+db 75 0A 8D 50 FA
+mov ecx, ebx
+call 017E4190 //update call as well

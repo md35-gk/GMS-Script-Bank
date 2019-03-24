@@ -1,0 +1,19 @@
+define(action,%arg1) // change action here
+
+[ENABLE]
+alloc(MobControl,128)
+
+MobControl:
+mov [edi+000004E0],action
+mov eax,[edi+000004E0]
+jmp 028CEB7A+6
+
+028CEB7A:
+jmp MobControl
+db 90
+
+[DISABLE]
+028CEB7A: // CVecCtrlMob::WorkUpdateActive: E9 ? ? ? ? 8B ? ? ? 00 00 83 ? ? 0F ? ? ? ? ? FF [Address below]
+mov eax,[edi+000004E0]
+ 
+dealloc(MobControl)

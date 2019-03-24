@@ -1,0 +1,53 @@
+//by Lapig
+//Numpad+ to set camera to follow mouse Numpad- to disable
+
+[ENABLE]
+Alloc(Hook,123)
+Label(Return)
+Label(On)
+Label(Off)
+Label(Exit)
+
+Hook:
+pushad
+cmp ebx,004E0000 //Numpad +
+je On
+cmp ebx,004A0000 //Numpad -
+je Off
+Exit:
+popad
+mov ecx,[0374C7F0]
+jmp Return
+
+//__thiscall CCameraMoveByCursor::OnOn(void)
+//68 90 01 00 00 E8
+On:
+mov ecx,[0370E998]
+test ecx,ecx
+je 0199C63A
+mov ecx,[ecx+00016960]
+push 00000400         //camera speed
+call 010D14E0
+jmp Exit
+
+//__thiscall CCameraMoveByCursor::OnOff(void)
+Off:
+mov ecx,[0370E998]
+test ecx,ecx
+je 0199C657
+mov ecx,[ecx+00016960]
+push 00
+call 010D1540
+jmp Exit
+
+029A5303:
+jmp Hook
+db 90
+Return:
+
+[DISABLE]
+
+029A5303: //8B 0D ? ? ? ? 85 C9 74 ? 83 C1 04 8B 01 5D FF 20
+mov ecx,[0374C7F0]
+
+dealloc(Hook)

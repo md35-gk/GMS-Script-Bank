@@ -1,0 +1,15 @@
+[ENABLE]
+02653444: //85 F6 75 05 39 ? 10 74
+xor esi,esi
+nop
+nop
+
+0265344B: //address of JE below
+db EB
+
+[DISABLE]
+02653444:
+db 85 F6 75 05
+
+0265344B:
+db 74
