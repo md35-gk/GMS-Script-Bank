@@ -1,0 +1,22 @@
+[ENABLE]
+alloc(Hook,128)
+alloc(Skill_ID,4)
+registersymbol(Skill_ID)
+
+Hook:
+mov [Skill_ID],ecx
+cmp byte ptr [ebp+28],00
+jmp 023DBF3E+7
+
+023DBF3E:
+jmp Hook
+db 90 90
+
+[DISABLE]
+023DBF3E: // 89 ? ? 80 ? ? ? 89 ? ? ? ? ? 74
+mov [esi+3C],ecx
+cmp byte ptr [ebp+28],00
+
+dealloc(Hook)
+dealloc(Skill_ID)
+unregistersymbol(Skill_ID)

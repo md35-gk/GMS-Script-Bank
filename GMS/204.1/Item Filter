@@ -1,0 +1,91 @@
+// credits SunCat for updated aob
+[ENABLE]
+alloc(ItemFilter,256)
+alloc(ItemList,2048)
+alloc(Mesos,4)
+alloc(Mode,4)
+label(Return)
+label(End)
+label(FilterMesos)
+label(RejectOrAccept)
+label(AcceptFilter)
+label(RejectFilter)
+label(Ignore)
+
+Mesos:
+dd #%arg1 // Minimum meso
+
+Mode:
+dd #%arg2 // 0 = Accept, 1 = reject
+
+ItemList:
+//Add filter like below
+//dd #itemID
+
+%arg3
+dd 00 // End of list
+
+ItemFilter:
+push edx
+mov edx,[Mesos]
+cmp eax,edx
+jle FilterMesos
+mov edx,ItemList
+jmp RejectOrAccept
+
+FilterMesos:
+mov eax,0
+jmp End
+
+RejectOrAccept:
+cmp byte ptr [Mode],0
+je AcceptFilter
+cmp byte ptr [Mode],1
+je RejectFilter
+
+AcceptFilter:
+cmp eax,[edx](Mesos)
+je End
+cmp dword ptr [edx],0
+je Ignore
+add edx,4
+jmp AcceptFilter
+
+RejectFilter:
+cmp eax,[edx]
+je Ignore
+cmp dword ptr [edx],0
+je End
+add edx,4
+jmp RejectFilter
+
+Ignore:
+cmp eax,#%arg4 // Added this code otherwise mesos is dropped but not shown in accept mode
+jle End
+mov eax,0
+
+End:
+pop edx
+mov [ebp-34],eax
+inc ecx
+mov eax,939A85C5
+jmp Return
+
+012A8897:
+jmp ItemFilter
+nop
+nop
+nop
+nop
+Return:
+
+[DISABLE]
+012A8897: // F3 ? ? ? ? ? ? ? F3 ? ? ? ? ? ? ? E8 ? ? ? ? 8B 0D ? ? ? ? 89 ? ? ? B8 below
+mov [ebp-34],eax
+inc ecx
+mov eax,939A85C5
+
+dealloc(ItemFilter)
+dealloc(ItemList)
+dealloc(Mesos)
+dealloc(Mode)

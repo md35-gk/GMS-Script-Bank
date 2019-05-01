@@ -1,0 +1,15 @@
+[ENABLE]
+0264AF54: //85 F6 75 05 39 ? 10 74
+xor esi,esi
+nop
+nop
+
+0264AF5B: //address of JE below
+db EB
+
+[DISABLE]
+0264AF54:
+db 85 F6 75 05
+
+0264AF5B:
+db 74

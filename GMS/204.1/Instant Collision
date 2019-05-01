@@ -1,0 +1,8 @@
+[enable]
+//CForceAtom::isCollisionArrive
+0158A371: //  0F 85 ? ? FF FF 38 ? ? 0F 85 ? ? FF FF
+db 90 E9
+
+[disable]
+0158A371:
+db 0F 85 4D FE FF FF

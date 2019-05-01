@@ -1,0 +1,7 @@
+[Enable]
+016ECCB3: //E8 ? ? ? ? 8B ? 8B ? 6A 01 FF 50 ? 8B CE E8 ? ? ? ? 8B CE E8 ? ? ? ? 6A 00
+db 90 90 90 90 90
+
+[Disable]
+016ECCB3:
+call 016F2FC0

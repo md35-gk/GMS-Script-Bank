@@ -1,0 +1,18 @@
+//Show/Hide all NPCs on map
+//1. Activate the script
+//2. load into a map to see desired results
+
+define(npcflag, 018CE6C2) //0F B6 C0 89 ? ? ? 00 00 8B ? ? ? 00 00 83 ? ? 00 0F 84 [mov below]
+[enable]
+npcflag:
+mov [ebx+000001EC],%arg1 //show(1)/hide(0) npc
+nop
+nop
+nop
+nop
+
+[disable]
+npcflag:
+mov [ebx+000001EC],eax
+mov eax,[ebx+0000016C]
+cmp dword ptr [eax+14],00
