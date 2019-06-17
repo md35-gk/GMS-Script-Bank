@@ -1,0 +1,8 @@
+define(ConstantAttack, 0160DD21) //  0F 8E ? ? 00 00 8B ? ? 81 C1 [second]
+[Enable]
+ConstantAttack:
+db 90 90 90 90 90 90
+
+[Disable]
+ConstantAttack:
+db 0F 8E 03 01 00 00
