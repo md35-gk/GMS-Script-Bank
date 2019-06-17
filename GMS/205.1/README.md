@@ -1,4 +1,4 @@
-# GMS v204.1 Scripts
+# GMS v205.1 Scripts
 
 **Keep it public: Reference any use of these scripts back to this script bank. Consider submitting a [pull request](https://github.com/md35-gk/GMS-Script-Bank/compare) to help update or add scripts.**
 
