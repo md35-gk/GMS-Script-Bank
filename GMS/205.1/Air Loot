@@ -1,0 +1,19 @@
+[Enable]
+012E64BE:
+db 90 90
+
+012E64C4:
+db 90 90
+
+012E64D3:
+db 90 90
+
+[Disable]
+012E64BE: //74 ? 83 ? ? ? 75 ? 8B ? 2B
+db 74 75
+
+012E64C4: // next jne
+db 75 6F
+
+012E64D3: // next jl
+db 7C 60
