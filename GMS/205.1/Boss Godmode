@@ -1,0 +1,7 @@
+[ENABLE]
+01391AB6:
+mov eax,1
+
+[DISABLE]
+01391AB6: // E8 ? ? ? ? 83 C4 ? C3 CC E8 ? ? FF FF 50 E8 ? ? ? FF 83 C4 ? C3 CC E8 ? ? FF FF 50 [FIRST]
+call 0099F360 // update

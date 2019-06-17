@@ -1,0 +1,10 @@
+[ENABLE]
+017D0462: //75 ? 8D ? ? 8B ? E8 ? ? ? ? 8B ? E8
+jmp 017D0ADF //8B ? ? ? ? ? 85 C0 0F 84 ? ? 00 00 2B ? 0F 89 ? ? ? ? C7 ? ? 00 00 00 00 8D
+//backtrack from jmp above
+
+[DISABLE]
+017D0462:
+db 75 0A 8D 50 FA
+mov ecx, ebx
+call 0183C030 //update call as well
