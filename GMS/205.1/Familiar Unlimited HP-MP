@@ -1,0 +1,39 @@
+// credits breadkiller
+// restoring HP or MP requires a familiar with the ability to do either/both, similar to Jr. Boogie Unlimited MP
+
+define(Restore_HP,#%arg1)
+define(Restore_MP,#%arg1)
+[ENABLE]
+Alloc(Hook,128)
+Label(Return)
+Label(Restore)
+
+Hook:
+mov eax,[0388D274] // 89 0D ? ? ? ? C7 06 ? ? ? ? C7 46 ? ? ? ? ? C7 46 ? ? ? ? ? C7 86 ? ? 00 00 ? ? ? ? C7 86 ? ? 00 00 00 00 00 00 C7 86 ? ? 00 00 00 00 00 00 C7 86 ? ? 00 00 00 00 00 00 C7 86 ? ? 00 00 00 00 00 00 C7 86 ? ? 00 00 00 00 00 00 C6 ? ? ? C7 86 ? ? 00 00 FF FF FF FF E8
+mov eax,[eax+165C] // C7 86 ? ? 00 00 00 00 00 00 C7 86 ? ? 00 00 00 00 00 00 C6 ? ? ? C7 86 ? ? 00 00 FF FF FF FF E8
+mov eax,[eax+214] // 89 ? ? ? 00 00 8D ? ? ? 00 00 FF ? ? ? 00 00 33 F6 50 E8
+cmp eax,Restore_HP
+jl Restore
+mov eax,[0388D274] // 89 0D ? ? ? ? C7 06 ? ? ? ? C7 46 ? ? ? ? ? C7 46 ? ? ? ? ? C7 86 ? ? 00 00 ? ? ? ? C7 86 ? ? 00 00 00 00 00 00 C7 86 ? ? 00 00 00 00 00 00 C7 86 ? ? 00 00 00 00 00 00 C7 86 ? ? 00 00 00 00 00 00 C7 86 ? ? 00 00 00 00 00 00 C6 ? ? ? C7 86 ? ? 00 00 FF FF FF FF E8
+mov eax,[eax+1664] // C7 86 ? ? 00 00 00 00 00 00 C6 ? ? ? C7 86 ? ? 00 00 FF FF FF FF E8
+mov eax,[eax+214] // 89 ? ? ? 00 00 50 8D ? ? E8 ? ? ? ? 8B ? ? C7
+cmp eax,Restore_MP
+jl Restore
+cmp [esi+00000170],eax
+jmp Return
+
+Restore:
+mov [esi+00000170],eax
+jmp Return
+
+0134E455: //  39 ?? ? ? 00 00 7F ? 8B CE E8 ? ? ? ? 8B ?? ? ? 00 00 [first]
+//OR c7 86 ? ? ? ? ? ? ? ? c7 86 ? ? ? ? ? ? ? ? 8b ? e8 ? ? ? ? 85 ? 74 ? 8b ? ? ? ? ? 8b ? ff ? ? 85 [cmp below]
+jmp Hook
+nop
+Return:
+
+[DISABLE]
+0134E455:
+cmp [esi+00000170],eax
+
+dealloc(Hook)

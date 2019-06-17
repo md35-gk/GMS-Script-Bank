@@ -1,0 +1,40 @@
+[Enable]
+alloc(DecodeMoneyHook,128)
+alloc(DecodeChangeStatHook,128)
+label(DecodeMoneyRet)
+label(DecodeChangeStatRet)
+
+alloc(Mesos,8)
+registersymbol(Mesos)
+
+0090626F:
+jmp DecodeMoneyHook
+nop
+DecodeMoneyRet:
+
+DecodeMoneyHook:
+mov [Mesos],eax
+lea ecx,[esi+000000BE] // Original Opcode
+jmp DecodeMoneyRet
+
+00906D21:
+jmp DecodeChangeStatHook
+nop
+DecodeChangeStatRet:
+
+DecodeChangeStatHook:
+mov [Mesos],eax
+lea ecx,[esi+000000BE] // Original Opcode
+jmp DecodeChangeStatRet
+
+[Disable]
+0090626F: // GW_CharacterStat::DecodeMoney: 8D ? ? ? ? 00 50 E8 ? ? ? ? 89 ? ? ? ? 00 5E
+lea ecx,[esi+000000BE]
+
+00906D21: // GW_CharacterStat::DecodeChangeStat: 8D ? ? ? ? 00 50 E8 ? ? ? ? 89 ? ? ? ? 00 8B [Second result]
+lea ecx,[esi+000000BE]
+
+dealloc(DecodeMoneyHook)
+dealloc(DecodeChangeStatHook)
+dealloc(Mesos)
+unregistersymbol(Mesos)
