@@ -10,7 +10,7 @@ timer:
 dd 00
 
 // CDropPool::TryPickUpDropByPet
-012E8FD8: //2B 81 ? ? 00 00 3D B8 0B 00 00 0F 8C call below
+012E8FF3: //2B 81 ? ? 00 00 3D B8 0B 00 00 0F 8C call below
 jmp Hook
 Return:
 
@@ -49,5 +49,5 @@ jmp Return
 dealloc(Hook)
 dealloc(timer)
 
-012A6C43:
+012E8FF3:
 call 012DF630
