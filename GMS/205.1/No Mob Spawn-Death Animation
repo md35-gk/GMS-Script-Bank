@@ -1,5 +1,5 @@
 define(noSpawnAni, 017DB534) // 0F 8E ?? ?? 00 00 8B ? 33 ? E8
-define(CMob_OnDie, 017CD967) // 3D 33 BC 86 00 -static MOB ID [Function Start]
+define(CMob_OnDie, 017CD0C0) // 3D 33 BC 86 00 -static MOB ID [Function Start]
 
 [ENABLE]
 noSpawnAni:
