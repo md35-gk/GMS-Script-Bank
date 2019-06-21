@@ -1,0 +1,56 @@
+[ENABLE]
+alloc(DispatchMessageA_Hook,128)
+alloc(SendPacket,128)
+alloc(SPacket,128)
+alloc(Packet,64)
+label(InjectPacket)
+
+SPacket:// 16 bytes
+dd 00 // Unknown 1
+dd 00 // Packet Data
+dd 40 // Packet Size (Take care of the packet size. If your packet is bigger than the size, it will crash.)
+dd 00 // Unknown 2
+
+// Drop 10 Mesos
+// [B8 0F] [C5 96 14 0D] [0A 00 00 00]
+// [Header] [TimeStamp] [Mesos Amount]
+Packet:
+db B8 0F C5 96 14 0D 0A 00 00 00
+
+SPacket+4:
+dd Packet
+
+SendPacket:
+mov ecx,[02AF17B4] // CClientSocketPtr: 8B 0D ? ? ? ? 85 C9 74 ? 8D ? ? 50 E8 ? ? ? ? 8D ? ? E8
+push SPacket
+push 006AF8EC // Search for 90 C3 for fake return address
+jmp 00DC6B50 // CClientSocket::SendPacket: Follow call below CClientSocketPtr
+
+DispatchMessageA_Hook:
+push 70 // VK_F1
+call GetAsyncKeyState
+shr ax,#15
+cmp ax,1
+je InjectPacket
+mov edi,edi
+push ebp
+mov ebp,esp
+jmp DispatchMessageA+5
+
+InjectPacket:
+call SendPacket
+ret
+
+DispatchMessageA:
+jmp DispatchMessageA_Hook
+
+[DISABLE]
+DispatchMessageA:
+mov edi,edi
+push ebp
+mov ebp,esp
+
+dealloc(DispatchMessageA_Hook)
+dealloc(SendPacket)
+dealloc(SPacket)
+dealloc(Packet)
