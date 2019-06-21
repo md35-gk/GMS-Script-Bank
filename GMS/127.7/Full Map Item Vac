@@ -1,0 +1,43 @@
+[Enable]
+Alloc(FullMap_ItemVac,64)
+Label(ItemXY)
+
+FullMap_ItemVac:
+cmp [esp],00B1DD42
+je ItemXY
+nop
+cmp [esp],00B1E737
+jne USER32.PtInRect
+nop
+mov [esp],00B1E73B
+jmp USER32.PtInRect
+
+ItemXY:
+push eax
+push ebx
+mov ebx,[ebp-2C]
+mov eax,[esp+10]
+mov [ebx],eax
+mov eax,[esp+14]
+mov [ebx+04],eax
+pop ebx
+pop eax
+mov [esp],00B1DD94
+jmp USER32.PtInRect
+
+0242808C:
+dd FullMap_ItemVac
+
+[Disable]
+0242808C:
+dd USER32.PtInRect
+
+/*
+cmp [esp],00B1DD42 // seems to be the return address when there's an item on the ground and you press the loot key
+cmp [esp],00B1E737 // seems to be the return address when you pick up the item
+mov [esp],00B1E73B // 00B1E737+4
+mov ebx,[ebp-2C] // What's this?
+mov eax,[esp+10] // X?
+mov eax,[esp+14] // Y?
+mov [esp],00B1DD94 // Follow jmp after 00B1DD42?
+*/
