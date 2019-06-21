@@ -1,0 +1,41 @@
+//CREDIT YEESHIN
+[Enable]
+alloc(Reactor_Morph,123)
+alloc(Reactor_Force_V2,123)
+label(Reactor_Morph_Return)
+label(rett)
+
+
+Reactor_Morph:
+//mov eax, #0002000
+mov eax, #1012000 // Green Plant Reactor ID
+mov [esi+04],eax
+mov ecx,edi
+jmp Reactor_Morph_Return
+
+011C33BF: // 89 46 ?? 8B CF C7 46 ?? ?? ?? ?? ?? E8 ?? ?? ?? ?? 0F B6 C0
+jmp Reactor_Morph
+Reactor_Morph_Return:
+
+Reactor_Force_V2:
+add [esp],2
+mov [esi+28],eax
+lea ecx,[esp+6C]
+jmp rett
+
+011BD59B: // 89 ? ? 8d 4c ? ? c7 ? ? FE FF FF FF
+jmp Reactor_Force_V2
+db 90 90
+rett:
+
+[disable]
+dealloc(Reactor_Morph,123)
+dealloc(Reactor_Force_V2,123)
+
+011C33BF:
+mov [esi+04],eax
+mov ecx,edi
+
+011BD59B:
+mov [esi+28],eax
+lea ecx,[esp+6C]

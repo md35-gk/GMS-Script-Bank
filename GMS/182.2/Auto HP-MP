@@ -1,0 +1,72 @@
+//Breakpoint CWvsContext__OnKey Address if you want more.
+define(CTRL,001D0000)
+define(SHIFT,002A0000)
+define(INSERT,01520000)
+define(DEL,01530000)
+define(HOME,01470000)
+define(END,014F0000)
+define(PAGEUP,01490000)
+define(PAGEDOWN,01510000)
+define(ALT,00380000)
+//Change HP and MP Values to your preferred settings
+define(HP_VALUE,#4000)
+define(MP_VALUE,#10000)
+
+define(CWvsContext__OnKey,01E34D00) //A1 ?? ?? ?? ?? 85 C0 74 ?? 8D 48 ?? 8B 01 8B 00
+define(TSingleton_CWndMan___ms_pInstance,029EAA04) //8B ? ? ? ? ? C6 ? ? ? E8 ? ? ? ? 8B ? BA ? ? ? ? C6 [POINTER]
+define(hp_hook_address,019E4C3C) //89 B7 ? ? 00 00 8B 95 ? ? 00 00 52
+define(mp_hook_address,019E4FDC) //89 AE ? ? 00 00 E8 ? ? ? ? 8B ? ? ? C7
+
+[ENABLE]
+alloc(hp_hook,128)
+alloc(mp_hook,128)
+alloc(key_press,128)
+label(hp_return)
+label(mp_return)
+
+key_press:
+mov esi,[TSingleton_CWndMan___ms_pInstance]
+mov ecx,[esi+A8]
+push eax
+push 00
+call CWvsContext__OnKey
+ret
+
+hp_hook:
+mov [edi+000001B4],esi //Original Opcode
+cmp esi,HP_VALUE
+jnl hp_return
+pushad
+mov eax,PAGEUP //Change to HP potion key
+call key_press
+popad
+jmp hp_return
+
+hp_hook_address:
+jmp hp_hook
+nop
+hp_return:
+
+mp_hook_address:
+jmp mp_hook
+nop
+mp_return:
+
+mp_hook:
+mov [esi+000001B4],ebp //Original Opcode
+cmp ebp,MP_VALUE
+jnl mp_return
+pushad
+mov eax,PAGEDOWN //Change to MP potion key
+call key_press
+popad
+jmp mp_return
+
+
+[DISABLE]
+hp_hook_address:
+mov [edi+000001B4],esi
+
+mp_hook_address:
+mov [esi+000001B4],ebp
+Remarks

@@ -1,0 +1,32 @@
+[Enable]
+Alloc(Hook, 32)
+Label(ret)
+
+01E0F717://0F 84 ? ? ? ? 8D 44 24 14 50 8D 8B
+db 90 E9
+
+0133EDDC://E8 ? ? ? ? 8B 8E ? ? ? ? 51 8D 96 ? ? ? ? 52 E8 ? ? ? ? 83 C4 08 85 C0 0F 85
+jmp Hook
+ret:
+
+Hook:
+mov edi, ecx
+
+push #0//Y
+push #0//X
+lea ecx, [edi+10]
+call 0085B7C0 //8B 54 24 04 56 57 8B F9 8B 4C 24 10 8B 07 8B 40 40 IWzShape2D::Move
+
+mov ecx, edi
+call 01DEE390//CVecCtrl::UpdateActive
+
+jmp ret
+
+[Disable]
+01E0F717:
+db 0F 84
+
+0133EDDC:
+call 01DEE390
+
+Dealloc(Hook)

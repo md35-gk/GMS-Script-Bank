@@ -1,0 +1,49 @@
+[Enable]
+Alloc(Hook, 32)
+Label(TryDoingJaguarSkill)
+Label(ret)
+
+0132C418://01 00 00 00 C6 81 Don't suspend pls
+db 00
+
+Hook:
+call 013163A0 //original
+
+TryDoingJaguarSkill:
+push F
+push # SKILL ID
+mov ecx, esi
+call 0132AE90 //E8 ? ? ? ? 8B CE E8 ? ? ? ? EB 43
+
+jmp ret
+
+0133F7A5:
+jmp Hook
+ret:
+
+[Disable]
+0132C418:
+db 01
+
+0133F7A5:
+call 013163A0
+
+Dealloc(Hook)
+
+/*
+Skill ID's you can use:
+95001004 = 150m dmg line
+80001770 = level up skill (does not work on bosses)
+80001593 = FKING HIGH DMG 10B (does not work on bosses)
+
+Jaguar ID's:
+01F78E2F -Grey
+01F78E30 -Yellow
+01F78E31 -Red
+01F78E32 -Purple
+01F78E33 -Blue
+01F78E34 -Jaira
+01F78E35 -Snow White
+01F78E36 -Onyx Jaguar
+01F78E37 -Armored Crimson
+*/
