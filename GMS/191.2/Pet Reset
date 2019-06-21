@@ -1,0 +1,60 @@
+// Unequips and instantly equips free pet snail to prolong the life.
+//Pet Reset
+define(delay,#777)
+define(pet_item_slot,#1)
+
+[Enable]
+Alloc(Hook,123)
+Label(Return)
+Label(Exit)
+Label(PetRequest)
+
+alloc(timer,4)
+timer:
+dd 0
+
+Hook:
+mov ecx,[02FCC2BC] // Original
+pushad
+mov esi,[esi+103C8] // C2 04 00 8B 81 ? ? 00 00 8B ? ? 04
+test esi,esi
+je Exit
+cmp [esi+04],00    // Spawn pet if no pet
+je PetRequest
+mov edx,eax
+sub edx,[timer]
+cmp edx,delay
+jl Exit
+mov [timer],eax
+
+PetRequest: //  FF 75 08 8B CE E8 ? ? ? ? 5F 5E 5D C2 10 00 FF
+push pet_item_slot
+call 024D6800 // CWvsContext::SendActivatePetRequest(CWvsContext *this, int nPos)
+
+Exit:
+popad
+jmp Return
+
+02290D10: //  E8 ? ? ? ? 8B 0D ? ? ? ? 8B D8 8D ? ? 50 E8 ? ? ? ? 8B 7D [second and address below]
+jmp Hook
+nop
+Return:
+
+024D6AC6: //  Skips call to CUIEquipRenewal::SetEquipTabChange
+db EB
+
+02323350: //  No Blue Box (so you don't crash on rope/etc)
+ret
+
+[Disable]
+02290D10:
+mov ecx,[02FCC2BC]
+
+024D6AC6: //  74 07 6A 02 E8 ? ? ? ? 68
+db 74
+
+02323350:
+push ebp
+
+dealloc(Hook)
+dealloc(timer)

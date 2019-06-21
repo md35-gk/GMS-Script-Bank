@@ -1,0 +1,85 @@
+//Auto Spider Familiar + Swap to Jr Boogie for "Jr boogie Unlimited MP"
+define(restore_mp,#25000)
+[Enable]
+Alloc(hook,256)
+Label(get_mp)
+Label(summon_spider)
+Label(summon_boogie)
+Label(summon_familiar)
+Label(ending)
+Label(return)
+
+Alloc(MP,4)
+Alloc(familiar,4)
+
+hook:
+pushad
+mov ecx,[02FE7730] // CUserlocal 8B 3D ? ? ? ?  8B CF F3
+mov ecx,[ecx+14180] // apFamiliar 8B 87 ? ? ? ? 8B ? ? 04 8B ? ?  89 ? ? 85
+mov ecx,[ecx+4]
+mov eax,[ecx+280] // 8B ? ? ? ? ? 2D E0 A3 2B 00 3D 10 27
+cmp eax,002BA3FB // Jr Boogie value from offset
+jne get_mp
+call 0103F8D0 // 3D 10 27 00 00 72 ? 33 C0 8B function start
+
+get_mp:
+mov edi,[02FE7730] // 8B 0D ? ? ? ? 85 C9 74 ? 8B 01 6A 00 FF ? ? FF
+mov edi,[edi+1610] // E8 ? ? ? ? 8B 8E ? ? 00 00 85 C9 74 ? 8B 01 FF ? ? 8B 8E ? ? 00 00 5E Second address and offset below
+mov edi,[edi+1FC]  // 89 ? ? ? 00 00 50 8D ? ? E8
+mov [MP],edi
+cmp [MP],restore_mp
+jg summon_spider
+
+summon_boogie:
+cmp eax,002BA3FB // check familiar to prevent constantly spawning/despawning
+je ending
+mov [familiar],0097FAA2 // Jr Boogie
+jmp summon_familiar
+
+summon_spider:
+cmp eax,002BA4B1 // check familiar to prevent constantly spawning/despawning
+je ending
+mov [familiar],0097FB67 // Big Spider
+
+summon_familiar:
+mov ecx,[02FCC2BC] // CWvsContext PTR 8B 0D ? ? ? ? 50 E8 ? ? ? ? 8D ? ? E8 ? ? ? ? 8B
+push [familiar]
+call 024A6B50 // Call below using AOB above
+ending:
+popad
+mov fs:[00000000],eax // Original OP
+jmp return
+
+01438228: // GenerateMovePath Function (script won't execute unless theres mobs)
+jmp hook
+nop
+return:
+
+02323350: // No Blue Box (so you don't crash on rope/etc)
+ret
+
+//Vitality, Breath, + IDK patches
+024A6C40:
+db EB
+
+024A6DE7:
+db EB
+
+024A6E90:
+db EB
+
+[Disable]
+01438228: //64 A3 00 00 00 00 8B F9 89 BD ? ? FF FF 8B ? 08 8B ? 30
+mov fs:[00000000],eax
+
+02323350: // E8 ? ? ? ? 8B C8 E8 ? ? ? ? E8 ? ? ? ? 83 C4 1C 33 F6 EB ? 51 [3RD CALLS BELOW]
+push ebp
+
+024A6C40: // 74 ? 8B 80 ? ? ? ? 83 F8 01
+db 75
+
+024A6DE7: // 74 19 6A 00 6A 00 6A 00 6A 00 6A 00 6A 00 51 8B ? 68 ? ? 00 00 E9 ? ? FF FF 8D ? ? 8B CB 50
+db 74
+
+024A6E90: // 7E 3E 6A 00 6A 00 6A 00 6A 01
+db 7E

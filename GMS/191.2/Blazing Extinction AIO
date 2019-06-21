@@ -1,0 +1,61 @@
+// ZList<ZRef<CGrenade>>::RemoveAt(__POSITION *)
+define(DisableRemove, 02158630)   // 81 ? ? ? 00 00 A9 F3 B8 00 75 ? 8B CE E8 ? ? ? ? 53 [two calls below]
+// CUserLocal::OnSkillCooltimeSetM
+define(NoCoolDown, 022021A7)  // 83 FE 01 7c ? 57 8b 3D ? ? ? ? 85 FF 74 [second]
+// calls CVecCtrl::UpdateActive
+define(Freeze, 0128B673) // E8 ? ? ? ? FF B3 ? ? 00 00 E8 ? ? ? ? 83 C4 04 85 C0 0F 84
+// CFlameBallAttack::UpdateFlameBallAttack
+define(RemoveFlametail,012537A0) //  3D 5A BB C4 04 75 ?
+
+define(NDBE, 0128C865)  //  0F 84 ? ? 00 00 F2 ? ? ? ? ? 00 00 ? ? ? 8B
+define(ConstantAttack, 0128C808) // 0F 8E ? ? 00 00 8B ? ? 81 C1 [FIRST]
+define(InstantSpawn, 0128B436)   // 0F 8F ? ? 00 0 8B ? ? 85 C0 74 07 8B ? E8
+
+[Enable]
+DisableRemove: //Unlimited Time + Unlimited BE
+ret 4
+
+NoCoolDown:
+db EB
+
+Freeze:
+db 90 90 90 90 90
+
+RemoveFlametail:
+ret 10
+
+NDBE:
+db 90 E9
+
+ConstantAttack:
+db 90 90 90 90 90 90
+
+InstantSpawn:
+db 90 90 90 90 90 90
+
+DamageTickDelay:
+mov eax,0
+
+[Disable]
+DisableRemove:
+push ebp
+mov ebp,esp
+
+NoCoolDown:
+db 7C
+
+Freeze:
+call 00C068F0
+
+RemoveFlametail:
+push ebp
+mov ebp,esp
+
+NDBE:
+db 0F 84
+
+ConstantAttack:
+db 0F 8E ED 00 00 00
+
+InstantSpawn:
+db 0F 8F E1 19 00 00

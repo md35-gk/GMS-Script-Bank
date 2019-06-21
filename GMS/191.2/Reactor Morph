@@ -1,0 +1,33 @@
+[Enable]
+alloc(Reactor_Morph,123)
+label(Reactor_Morph_Return)
+
+Reactor_Morph:
+mov eax, #1012000 // Green plant Reactor ID
+mov [edi+04],eax
+mov ecx,esi
+jmp Reactor_Morph_Return
+
+016219FE:
+jmp Reactor_Morph
+Reactor_Morph_Return:
+
+01622906: //Force Break
+push 000003B9+2
+
+0218F74A: //Normal Attacks Hits Reactor at ND
+db 90 E9
+
+[Disable]
+dealloc(Reactor_Morph,123)
+
+016219FE: // 89 ? ? 8b ? c7 ? ? 00 00 00 00 e8 ? ? ? ? 0f ? ?
+mov [edi+04],eax
+mov ecx,esi
+
+01622906: //68 ? ? 00 00 C7 ? ? FE FF FF FF E8 ? ? ? ? FF 37 8D
+push 000003B9
+
+
+0218F74A: //0F 85 ? ? 00 00 8B ? 8B ? FF 50 ? 8B F0 8B CB 89
+db 0F 85 30 11 00 00

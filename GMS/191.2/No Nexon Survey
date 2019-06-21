@@ -1,0 +1,7 @@
+[ENABLE]
+0250C1F0: // CWvsContext::OpenNPS(void)
+db C3
+
+[DISABLE]
+0250C1F0: // 8B ? E8 ? ? ? ? 5F 0F B6 C3 [Follow call]
+db 55

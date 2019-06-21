@@ -1,0 +1,21 @@
+define(CWvsPhysicalSpace2D,02FE8464) // 8B 0D ? ? ? ? 6A 01 6A 00 68
+define(HitMobHook,0228F5CC) //  81 ? 4A 99 17 02 74 ? 81 ? 81
+define(CMobPool__FindHitMobInRect,01471770) // Original OP of address above
+
+[ENABLE]
+alloc(find_hit_mob_in_rect_hook,128)
+
+find_hit_mob_in_rect_hook:
+mov eax,[CWvsPhysicalSpace2D]
+lea eax,[eax+0C] // Left Wall Offset
+mov [esp+04],eax
+jmp CMobPool__FindHitMobInRect // Original call (CMobPool::FindHitMobInRect)
+
+HitMobHook:
+call find_hit_mob_in_rect_hook
+
+[DISABLE]
+dealloc(find_hit_mob_in_rect_hook)
+
+HitMobHook:
+call CMobPool__FindHitMobInRect

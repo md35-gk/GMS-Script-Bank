@@ -1,0 +1,21 @@
+define(CWvsPhysicalSpace2D,02FE8464) //  8B 0D ? ? ? ? 6A 01 6A 00 68
+define(DragonDive_HitMob_Address,00FE4394) //  E8 ? ? ? ? FF 73 ? 8B 35
+define(CMobPool__FindHitMobInRect,01471770) //Original OP of address above
+
+[ENABLE]
+alloc(find_hit_mob_in_rect_hook,128)
+
+find_hit_mob_in_rect_hook:
+mov eax,[CWvsPhysicalSpace2D] // CWvsPhysicalSpace2D:
+lea eax,[eax+0C] // Left Wall Offset
+mov [esp+04],eax
+jmp CMobPool__FindHitMobInRect  // Original call (CMobPool::FindHitMobInRect)
+
+DragonDive_HitMob_Address:
+call find_hit_mob_in_rect_hook
+
+[disable]
+dealloc(find_hit_mob_in_rect_hook)
+
+DragonDive_HitMob_Address:
+call CMobPool__FindHitMobInRect

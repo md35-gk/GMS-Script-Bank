@@ -1,0 +1,17 @@
+define(Map_ID,#230040400)  //Change ID here
+[ENABLE]
+02465432:
+mov [ebx+88DC],Map_ID
+
+[DISABLE]
+02465432: //  81 ? ? ? 00 00 FF C9 9A 3B 8D
+cmp [ebx+88DC],3B9AC9F
+
+/*
+
+1. Tick Script
+2. Add Map_ID as an address in CheatEngine
+3. Use Navigation and click to a teleportable map.
+
+Note: Teleporting only replace and spoof the desired MAP ID defined in the script. Server still determines whether it will teleport to the map or not
+*/
