@@ -1,0 +1,65 @@
+ /**
+  * \brief generic force no write - no maple logs - can protect users from nexon's collection processes.
+  * \author ezekiel @ moopler.net
+  * \version 8.189.2.0
+  * \edit 11/08/2017
+  */
+
+/***************************************************
+ * dynamic trace log
+ * -------------------------------------------------
+ * from: maplestory.exe + 0x1E9F4FF (0x229F4FF)
+ * to:   KERNELBASE.dll + 0xC93A0 (0x772A93A0) [WriteFile]
+ * -------------------------------------------------
+ * analysis
+ * -------------------------------------------------
+ * reference:
+ * https://msdn.microsoft.com/en-us/library/windows/desktop/aa365747(v=vs.85).aspx
+ *
+ * affected files:
+ * msuset.log, awesomium.log, CrashReportLog.txt, and additional debug logs
+ *
+ * write example - msuset.log:
+ * edx='2017-11-08 12:22:22/Field/12345678/22/11/1234567/PlayerName/1/4002/807100110'
+ * eax=4F
+ * [ebp+8]=384
+ * [ebp+C]='2017-11-08 12:22:22/Field/12345678/22/11/1234567/PlayerName/1/4002/807100110'
+ * [ebp+10]=4F
+ *
+ * process:
+ * delete the buffer pointer before writing to file.
+ *
+ * results:
+ * protects users from nexon's collection processes.
+ * -------------------------------------------------
+ *
+ * better solution that I mentioned to those who contacted me:
+ * hook nxgsm.dll and block log write export functions. Additionally,
+ * you can also stop the livelogs.nexon.com domain in this dll as well.
+ * It is a more portable solution to Razz's finds on the matter.
+ * 
+ ***************************************************/
+
+DEFINE(KERNEL32_WriteFile, "KERNEL32.DLL"+29D30)
+
+[ENABLE]
+ALLOC(delete_buffer_ptr, 16)
+LABEL(return)
+LABEL(exit)
+
+delete_buffer_ptr:
+xor edx, edx
+
+exit:
+jmp dword ptr [KERNEL32.WerpLaunchAeDebug+1B818]
+jmp return
+
+KERNEL32_WriteFile:
+jmp delete_buffer_ptr
+nop
+return:
+
+[DISABLE]
+DEALLOC(delete_buffer_ptr)
+KERNEL32_WriteFile:
+jmp dword ptr [KERNEL32.WerpLaunchAeDebug+1B818]
