@@ -1,0 +1,53 @@
+/*
+  + Attack based packet sender. Just attck once to send your packet.
+  + Made by Razz (well, he grabbed the first address he saw in scripts database, so OuterHaven/Cam for the hook address)
+*/
+
+[enable]
+alloc(hook,256)
+alloc(packet, 128)
+alloc(coutpacket_custom, 48)
+label(return)
+label(exit)
+
+alloc(_InjectPacket,28)
+_InjectPacket:
+mov ecx, [02D81754] // CClientSocketPtr: 8B 0D ? ? ? ? 85 C9 74 ? 8D ? ? 50 E8 ? ? ? ? 8D ? ? E8
+lea eax, [coutpacket_custom]
+push eax
+push 01FF1292 // Search for 90 C3 for fake return address
+jmp 00E61FB0 // CClientSocket::SendPacket: Follow call below CClientSocketPtr
+ret
+
+packet:
+db 00 00 00 00 C0 F9 FF FF C0 F9 FF FF // packet goes here (this one has 12 bytes, for example)
+
+020A85F0: // CAntiRepeat::TryRepeat
+jmp hook
+return:
+
+hook:
+pushad
+push 0129 // unencrypted header goes here
+lea ecx, [coutpacket_custom]
+call 00A19440 //coutpacket::coutpacket
+push #12 // size of packet goes here
+lea eax, [packet]
+push eax //data
+lea ecx, [coutpacket_custom]
+call 007D63C0 //EncodeBuffer
+call _InjectPacket
+
+exit:
+popad
+db 55 8B EC 8B 01
+jmp return
+
+[disable]
+020A85F0: // 7E ? 83 ? ? 7D ? 8B ? ? 2B ? 3D [Start]
+db 55 8B EC 8B 01
+
+dealloc(hook)
+dealloc(coutpacket_custom)
+dealloc(_InjectPacket)
+dealloc(packet)

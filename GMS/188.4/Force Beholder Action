@@ -1,0 +1,52 @@
+/*
+6 = Evil Eye of Domination
+7 = Evil Eye Shock
+9 = Beholder's Impact
+*/
+
+[ENABLE]
+alloc(Hook,128)
+alloc(Time,4)
+label(Ending)
+
+Time:
+dd 0
+
+Hook:
+call 0213BCF0 // Original Opcode
+pushad
+call GetTickCount
+mov edx,eax
+sub edx,[Time]
+cmp edx,#500 // Delay in milliseconds
+jl Ending
+mov [Time],eax
+push 00 // void *unknown2 (skill id)
+push #9 // void *unknown1 (action)
+push 01 // int bForce
+mov ecx,[02D821E0] // 8D 8E ? ? 00 00 E8 ? ? ? ? E8 ? ? ? ? 50 [Follow second call]
+mov eax,[ecx+1C]
+push eax // int tCur
+mov ecx,esi // CSummoned *this
+call 015B4610 // CSummoned::TryDoingAttackManual: 55 8B EC 6A FF 68 ? ? ? ? 64 A1 00 00 00 00 50 B8 ? ? ? ? E8 ? ? ? ? A1 ? ? ? ? 33 C5 89 ? ? 53 56 57 50 8D ? ? 64 A3 00 00 00 00 89 ? ? ? ? ? C7 [Third result]
+jmp Ending
+
+Ending:
+popad
+jmp 015BEFAE+5			//CSummoned::Update
+
+015BEFAE:
+jmp Hook
+
+015B7424:
+db 6A 00
+
+[DISABLE]
+015BEFAE: // CSummoned::Update: E8 ? ? ? ? 8B ? 8B ? ? ? ? ? 89 ? ? 85 ? 0F ? ? ? ? ? 33
+call 0213BCF0 // get_update_time
+
+015B7424: // E8 ? ? ? ? 6A 01 8B ? ? ? ? ? E8 ? ? ? ? 83 [Address below] (Follow call =  CSummoned::PrepareActionLayer)
+db 6A 01
+
+dealloc(Hook)
+dealloc(Time)

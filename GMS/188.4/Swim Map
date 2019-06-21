@@ -1,0 +1,9 @@
+[ENABLE]
+0233AB5F:
+db 75
+
+[DISABLE]
+0233AB5F: // E8 ? ? ? ? 85 ? 74 ? 8B ? ? ? ? ? 6A ? 83 [First result & je below]
+db 74
+
+// follow call = CField::IsSwimmingMap

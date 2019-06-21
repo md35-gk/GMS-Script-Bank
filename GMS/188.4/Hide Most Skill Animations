@@ -1,0 +1,23 @@
+define(CMob_ShowAffectedSkill,0132D450)  // 81 ? 0E D6 D7 17 0F 85 ? ? 00 00 8B 0D [FUNCTION START]
+define(CMob_ShowHitEffect,01332600)      // 57 8B F9 E8 ? ? ? ? 50 E8 ? ? 00 00 83 C4 04
+define(CUser_ShowSkillEffect,01F437F0)   // 6A 00 6A 00 6A 00 68 FF FF FF 7F 6A 00 6A 06 56 F2 [Follow Call Below]
+
+[enable]
+CMob_ShowAffectedSkill:
+ret 0004
+
+CMob_ShowHitEffect:
+ret 0004
+
+CUser_ShowSkillEffect:
+ret 0040
+
+[disable]
+CMob_ShowAffectedSkill:
+db 55 8B EC
+
+CMob_ShowHitEffect:
+db 57 8B F9
+
+CUser_ShowSkillEffect:
+db 55 8B EC
