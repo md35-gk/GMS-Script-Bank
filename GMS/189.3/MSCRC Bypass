@@ -1,0 +1,5 @@
+[ENABLE]
+02235AA0: // CWvsContext::OnEnterField: E8 ? ? ? ? 8B ? ? 83 ? ? 8B ? 89 ? ? 8D [First result(CField::Init) & follow call]
+db 33 C0 C3
+
+[DISABLE]

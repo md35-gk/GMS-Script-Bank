@@ -1,0 +1,105 @@
+[ENABLE]
+alloc(CVecCtrlMob__CtrlUpdateActiveMove_Hook,128)
+alloc(CVecCtrlMob__CtrlUpdateActiveJump_Hook,128)
+alloc(CVecCtrlMob__CtrlUpdateActiveFlyX_Hook,128)
+alloc(CVecCtrlMob__CtrlUpdateActiveFlyY_Hook,128)
+alloc(CVecCtrlMob__CtrlUpdateActiveFlyX2_Hook,128)
+alloc(CVecCtrlMob__CtrlUpdateActiveFlyY2_Hook,128)
+alloc(X,4)
+alloc(Y,4)
+
+X:
+dd #500
+
+Y:
+dd #200
+
+CVecCtrlMob__CtrlUpdateActiveMove_Hook:
+movd xmm1,[X]
+xor eax,eax
+jmp 021BF383+6
+
+CVecCtrlMob__CtrlUpdateActiveJump_Hook:
+movd xmm1,[X]
+xor eax,eax
+jmp 021BFBB3+6
+
+CVecCtrlMob__CtrlUpdateActiveFlyX_Hook:
+push [X]
+call 00813830
+jmp 021C00F1+7
+
+CVecCtrlMob__CtrlUpdateActiveFlyY_Hook:
+mov eax,[Y]
+push eax
+call 00813830
+jmp 021C010F+9
+
+CVecCtrlMob__CtrlUpdateActiveFlyX2_Hook:
+push [X]
+lea ecx,[edi+0C]
+jmp 021C0172+5
+
+CVecCtrlMob__CtrlUpdateActiveFlyY2_Hook:
+push [Y]
+mov ecx,edi
+jmp 021C017C+5
+
+021BF383:
+jmp CVecCtrlMob__CtrlUpdateActiveMove_Hook
+db 90
+
+021BFBB3:
+jmp CVecCtrlMob__CtrlUpdateActiveJump_Hook
+db 90
+
+021C00F1:
+jmp CVecCtrlMob__CtrlUpdateActiveFlyX_Hook
+db 90 90
+
+021C010F:
+jmp CVecCtrlMob__CtrlUpdateActiveFlyY_Hook
+db 90 90 90 90
+
+021C0172:
+jmp CVecCtrlMob__CtrlUpdateActiveFlyX2_Hook
+
+021C017C:
+jmp CVecCtrlMob__CtrlUpdateActiveFlyY2_Hook
+
+[DISABLE]
+/* All theses addresses can be easily obtained with CUser::GetPos (Return Address) */
+
+021BF383: // CVecCtrlMob::CtrlUpdateActiveMove: 66 ? ? ? 31 ? F3 [First result]
+movd xmm1,[eax]
+xor eax,eax
+
+021BFBB3: // CVecCtrlMob::CtrlUpdateActiveJump: 66 ? ? ? 31 ? F3 [Second result]
+movd xmm1,[eax]
+xor eax,eax
+
+021C00F1: // CVecCtrlMob::CtrlUpdateActiveFly: FF ? E8 ? ? ? ? 8B ? ? ? ? ? 8D ? ? 52
+push [eax]
+call 00813830 // TSecType<long>::SetData
+
+021C010F: // CVecCtrlMob::CtrlUpdateActiveFly: 8B ? ? 50 E8 ? ? ? ? 8B ? ? ? ? ? E8 ? ? ? ? 85
+mov eax,[eax+04]
+push eax
+call 00813830 // TSecType<long>::SetData
+
+021C0172: // CVecCtrlMob::CtrlUpdateActiveFly: FF ? 8D ? ? E8 ? ? ? ? FF ? ? 8B [Last Green Result & push [esi]]
+push [esi]
+lea ecx,[edi+0C]
+
+021C017C: // CVecCtrlMob::CtrlUpdateActiveFly: FF ? 8D ? ? E8 ? ? ? ? FF ? ? 8B [Last Green Result & push [esi+04]]
+push [esi+04]
+mov ecx,edi
+
+dealloc(CVecCtrlMob__CtrlUpdateActiveMove_Hook)
+dealloc(CVecCtrlMob__CtrlUpdateActiveJump_Hook)
+dealloc(CVecCtrlMob__CtrlUpdateActiveFlyX_Hook)
+dealloc(CVecCtrlMob__CtrlUpdateActiveFlyY_Hook)
+dealloc(CVecCtrlMob__CtrlUpdateActiveFlyX2_Hook)
+dealloc(CVecCtrlMob__CtrlUpdateActiveFlyY2_Hook)
+dealloc(X)
+dealloc(Y)

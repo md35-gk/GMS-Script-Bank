@@ -1,0 +1,66 @@
+[ENABLE]
+alloc(DupeX,256)
+alloc(Platform,4)
+alloc(RunFlag,4)
+label(NullPlatform)
+label(DoVac)
+label(Normal)
+
+Platform:
+dd 00000000
+
+RunFlag:
+dd 00000000
+
+DupeX:
+pushfd
+push eax
+push ecx
+mov eax,[02D887A0] // CUserLocal: 8B 3D ? ? ? ? 8B CF F3
+test eax,eax
+je NullPlatform
+mov eax,[eax+0000AB44] // Character Vector Control Offset: 8B 97 ? ? 00 00 6A 00 6A 00 [Fourth result]
+lea ecx,[eax-10]
+test ecx,ecx
+je NullPlatform
+mov eax,[ecx+0000013C]
+test eax,eax
+je NullPlatform
+cmp [RunFlag],01
+je DoVac
+mov [Platform],eax
+inc [RunFlag]
+jmp DoVac
+
+DoVac:
+cmp ebx,ecx
+je Normal
+mov edi,[Platform]
+jmp Normal
+
+NullPlatform:
+mov [Platform],00
+mov [RunFlag],00
+jmp Normal
+
+Normal:
+pop ecx
+pop eax
+popfd
+mov [ebx+0000013C],edi // Original Opcodes
+jmp 00B93961+6
+
+00B93961:
+jmp DupeX
+db 90
+
+[DISABLE]
+00B93961: // CVecCtrl::OnAttachedObjectChanged: 89 ? ? ? 00 00 C7 ? ? ? 00 00 00 00 00 00 C7 ? ? ? 00 00 00 00 00 00 C7 ? ? ? 00 00 00 00 00 00 66 [First result]
+mov [ebx+0000013C],edi
+
+dealloc(DupeX)
+dealloc(Platform)
+dealloc(RunFlag)
+
+// Assembly scan: call CUserLocal::SetDamaged [First result]
+// CVecCtrl::OnAttachedObjectChanged: E8 ? ? ? ? 5F 5E 5B 8B E5 5D C2 10 00 CC [Second result & follow call at end of function]

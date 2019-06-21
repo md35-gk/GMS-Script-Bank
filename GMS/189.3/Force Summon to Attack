@@ -1,0 +1,21 @@
+[ENABLE]
+alloc(Hook,128)
+
+Hook:
+call 02141D40 // Original Opcode
+pushad
+push 00 // int nAIType
+push 00 // int tCur
+mov ecx,esi // CSummoned *this
+call 015B0F30 // CSummoned::TryDoingAttack: 55 8B EC 6A FF 68 ? ? ? ? 64 A1 00 00 00 00 50 B8 ? ? ? ? E8 ? ? ? ? A1 ? ? ? ? 33 C5 89 ? ? 53 56 57 50 8D ? ? 64 A3 00 00 00 00 89 ? ? ? ? ? C7 [Second result]
+popad
+jmp 015C101E+5
+
+015C101E:
+jmp Hook
+
+[DISABLE]
+015C101E: // CSummoned::Update: E8 ? ? ? ? 8B ? 8B ? ? ? ? ? 89 ? ? 85 ? 0F ? ? ? ? ? 33
+call 02141D40 // get_update_time
+
+dealloc(Hook)
