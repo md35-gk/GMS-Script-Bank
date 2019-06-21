@@ -1,0 +1,24 @@
+[ENABLE]
+alloc(Hook,128)
+alloc(Skill_ID,4)
+registersymbol(Skill_ID)
+
+Hook:
+mov [Skill_ID],eax
+push [esi+04]
+jmp 01D1BFF1+6
+
+01D1BFF1:
+jmp Hook
+db 90
+
+[DISABLE]
+01D1BFF1: // 89 ? ? FF ? ? 33 ? 89 ? ? ? ? ? E8 ? ? ? ? 83
+mov [ebx+2C],eax
+push [esi+04]
+
+dealloc(Hook)
+dealloc(Skill_ID)
+unregistersymbol(Skill_ID)
+
+// Hover your mouse on your skill tab list to get id

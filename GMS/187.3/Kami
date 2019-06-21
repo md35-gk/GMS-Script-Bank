@@ -1,0 +1,120 @@
+define(CUserLocal,02C7352C) // 8B 3D ? ? ? ?  8B CF F3
+define(CMobPool,02C79838) // 8B 0D ? ? ? ? 8D 85 ? FF FF FF 6A 00 6A 00
+define(CMob_3,20C)
+
+define(x_dist,#25)
+define(y_dist,#0)
+
+[enable]
+alloc(kami,128)
+label(kami_end)
+
+alloc(get_mob_pos,256)
+label(get_mob_false)
+label(get_mob_true)
+label(get_mob_next)
+
+alloc(teleport,128)
+label(teleport_end)
+
+get_mob_pos:
+mov esi,[CMobPool]
+test esi,esi
+je get_mob_false
+mov edx,[esi+10]
+test edx,edx
+je get_mob_false
+mov esi,[esi+28]
+test esi,esi
+je get_mob_false
+mov edx,[esi+04]
+test edx,edx
+je get_mob_false
+mov edx,[edx+CMob_3]
+test edx,edx
+je get_mob_false
+mov edx,[edx+34]
+test edx,edx
+je get_mob_false
+mov ebx,[edx+68]
+or ebx,[edx+6C]
+test ebx,ebx
+jne get_mob_true
+mov esi,[esi-10]
+test esi,esi
+je get_mob_false
+
+get_mob_next:
+mov edx,[esi+18]
+test edx,edx
+je get_mob_false
+mov edx,[edx+CMob_3]
+test edx,edx
+je get_mob_false
+mov edx,[edx+34]
+test edx,edx
+je get_mob_false
+mov ebx,[edx+68]
+or ebx,[edx+6C]
+test ebx,ebx
+jne get_mob_true
+mov esi,[esi+04]
+test esi,esi
+je get_mob_false
+jmp get_mob_next
+
+get_mob_false:
+xor eax,eax
+ret
+
+get_mob_true:
+lea eax,[edx+60]
+ret
+
+teleport:
+mov esi,[CUserLocal]
+lea ecx,[esi+04]
+mov eax,[esi+04]
+mov eax,[eax+20]
+call eax
+test eax,eax
+je teleport_end
+push ebx
+push edx
+push 00
+mov ecx,eax
+call 00B63490 // CVecCtrl::raw_Move 55 8B EC ? ? 10 ? FF ? 10 8D ? 10 FF ? 0C 56 FF 50 40 85 C0 79 0C 68 ? ? ? ? ? ? E8 ? ? ? ? 5E
+teleport_end:
+ret
+
+kami:
+cmp dword ptr [esp],01FB1AD8 // 8D 90 ? ? ? ? 83 ? ? 72 ? 3D D2 07 00 00 75 ? 80
+pushad
+jne kami_end
+mov eax,[CUserLocal]
+test eax,eax
+je kami_end
+call get_mob_pos
+test eax,eax
+je kami_end
+mov ebx,[eax+4]
+sub ebx,y_dist
+mov edx,[eax]
+sub edx,x_dist
+call teleport
+jmp kami_end
+
+kami_end:
+popad
+jmp 01F245D0
+
+02835EB8:
+dd kami
+
+[disable]
+02835EB8: // 4 Byte Scan
+dd 01F245D0 // 55 8B EC 6A FF 68 ? ? ? ? 64 A1 00 00 00 00 50 83 EC 08 56 A1 ? ? ? ? 33 C5 50 8D ? ? 64 A3 00 00 00 00 8B 0D ? ? ? ? 85 C9 74 ? 8D
+
+dealloc(teleport)
+dealloc(get_mob_pos)
+dealloc(kami)

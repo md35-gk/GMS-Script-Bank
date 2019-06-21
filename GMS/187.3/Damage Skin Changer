@@ -1,0 +1,24 @@
+//https://www.moopler.net/topic/666-damage-skin-ids/
+define(skin_id,#1262)
+[Enable]
+Alloc(Hook,16)
+
+Hook:
+mov [esp+8],skin_id
+push ebp
+mov ebp,esp
+sub esp,0C
+jmp Return
+
+00CF4820:
+jmp Hook
+nop
+Return:
+
+[Disable]
+dealloc(Hook)
+
+00CF4820:
+push ebp
+mov ebp,esp
+sub esp,0C

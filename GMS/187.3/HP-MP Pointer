@@ -1,0 +1,40 @@
+/*Theses addresses can be easily obtain by scanning your current HP/MP then do find out what access theses addresses*/
+/*I am unable to get MaxHP MaxMP Current EXP Max EXP =(*/
+// Addresses inside CUIStatusBar::SetNumberValue
+[ENABLE]
+alloc(Current_HP,128)
+alloc(Current_MP,128)
+alloc(hp,4)
+alloc(mp,4)
+registersymbol(hp)
+registersymbol(mp)
+
+Current_HP:
+mov [hp],esi
+jmp 01CB7101+6
+
+Current_MP:
+mov [mp],esi
+jmp 01CB762D+6
+
+01CB7101:
+jmp Current_HP
+db 90
+
+01CB762D:
+jmp Current_MP
+db 90
+
+[DISABLE]
+01CB7101:
+mov [edi+000001CC],esi
+
+01CB762D:
+mov [ebx+000001CC],esi
+
+dealloc(Current_HP)
+dealloc(Current_MP)
+dealloc(hp)
+dealloc(mp)
+unregistersymbol(hp)
+unregistersymbol(mp)

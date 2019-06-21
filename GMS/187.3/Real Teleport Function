@@ -1,0 +1,33 @@
+[Enable]
+Alloc(Teleport, 128)
+CreateThread(Teleport)
+
+Teleport:
+mov esi,[02C7352C] // CUserLocal: 8B 3D ? ? ? ? 8B CF F3
+push 00 // Y
+push 00 // X
+push [esi+AA80] // Character Vector Control Offset: 8B 97 ? ? 00 00 6A 00 6A 00
+call 02123D00 // CVecCtrl::raw_Move
+ret
+
+//you can get CharPID Offset easily by setting break point at the 02123CF0(Real Teleport Function) and use portal or teleport skills
+//this function is not only for character, maple also calls it when the mob died
+
+[Disable]
+
+DeAlloc(Teleport)
+
+/*
+IWzShape2D::Move: E8 ? ? ? ? 6A 00 6A 04 8B ? ? ? ? ? 81 ? ? ? ? ? E8 [Follow call]
+
+CVecCtrl::SetMovePathAttribute: E8 ? ? ? ? 6A 00 6A 04 8B ? ? ? ? ? 81 ? ? ? ? ? E8 [Follow fourth call]
+
+Hook CVecCtrl::SetMovePathAttribute and log the return address (use portal or teleport skill) and go to function start = CVecCtrl::raw_Move
+
+Toggle a breakpoint CVecCtrl::raw_Move then use use portal or teleport skill and look at esp+0 and go to function start = CVecCtrl::SetTeleportNext (function used in public kami pet teleport)
+
+CVecCtrl::raw_Move: It moves players, pets, mobs, or NPC's based on the PID. (https://pastebin.com/GnVRCC3v)
+
+https://pastebin.com/GL56VFH5
+
+*/

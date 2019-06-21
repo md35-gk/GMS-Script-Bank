@@ -1,0 +1,7 @@
+[ENABLE]
+01360074:
+db B8 00
+
+[DISABLE]
+01360074: // CMovePath::CalcPassivePos: 0F ? ? 89 ? ? ? B8 01 [mov eax,00000001]
+db B8 01

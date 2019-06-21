@@ -1,0 +1,82 @@
+define(skill_ID,142120030)
+define(delay,#1) //Adjust Delay to Spawn Rate
+
+[Enable]
+alloc(Skill_Injection,128)
+label(Skill_Injection_Return)
+label(Exit)
+
+alloc(timer,4)
+
+02033F3B:
+jmp Skill_Injection
+Skill_Injection_Return:
+
+Skill_Injection:
+call 02098B30//get_update_time
+pushad
+mov edx,eax
+sub edx,[timer]
+cmp edx,delay
+jl Exit
+mov [timer],eax
+mov [esi+135D4],skill_ID
+Exit:
+popad
+jmp Skill_Injection_Return
+
+02034023:
+db 6A 00 90 90 90
+
+02033F9E:
+db 90 90 90 90 90 90
+
+02033FCA:
+db 90 90
+
+02033FFA:
+cmp [ecx+04],skill_ID
+
+01F54299: // MachGND (Melee/Basic attacks)
+db 8A
+
+[Disable]
+02033F3B: // e8 ? ? ? ? 8b 0d ? ? ? ? 8b d8 8d 45 ? 50 e8 ? ? ? ? 8b 7d
+call 02098B30
+
+02034023:
+push 004215FE
+
+02033F9E:  // 0F 84 ? ? ? ? 2B 9E ? ? ? ? 0F 88
+db 0F 84 99 00 00 00
+
+02033FCA: // 75 ? 8B 0D ? ? ? ? 8D ? ? 6A 01 6A 00 6A 00 6A 00 ? FF B6 ? ? ? ? C7
+db 75 67
+
+02033FFA: //81 ? 04 FE 15 42 00
+cmp [ecx+04],004215FE
+
+01F54299:  //8B 95 ? ? ? ? 89 95 ? ? ? ? 8B 85 ? ? ? ? 50 E8 ? ? ? ? 83 C4 04
+db 8B
+
+/*
+TryDoingFinalAttack stopped getting called by CUserlocal::Update so the script was rewritten with a different function that also calls TryDoingMeleeAttack. You could also just call TryDoingMeleeAttack directly but this seems to be the format everyone uses and loves.
+
+Credits should still go to Benny/Sprux
+
+If you prefer the counter method of "delaying"
+replace
+
+mov edx,eax
+sub edx,[timer]
+cmp edx,delay
+jl Exit
+mov [timer],eax
+
+WITH
+
+inc [timer]
+cmp [timer],#10
+jne Exit
+mov [timer],00
+*/

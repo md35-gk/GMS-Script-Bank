@@ -1,0 +1,60 @@
+define(skill_ID,#142120030)
+define(delay, #1000) //Adjust Delay to Spawn Rate
+define(number_of_attacks, #1) //Number of Attacks to Kill A Mob. Start with #1 and count down how much it takes to kill mob
+define(min_mob_amount, #1)
+[ENABLE]
+Alloc(Hook,128)
+Alloc(timer,4)
+Alloc(counter,4)
+Label(ForcedMagicAttack)
+Label(Return)
+Label(Exit)
+
+Hook:
+call 02098B30 //get_update_time
+pushad
+mov edx,eax
+sub edx,[timer]
+cmp edx,delay
+jl Exit
+mov [timer],eax
+mov edi,[02C79838] //CMobPool 8B 0D ? ? ? ? 8D 85 ? FF FF FF 6A 00 6A 00 [First Result]
+cmp [edi+10],min_mob_amount
+jl Exit
+
+ForcedMagicAttack:
+mov ecx,esi //CUserLocal
+push skill_ID
+call 02026070 //CUserLocal::DoActiveSkilll_ForcedMagicAttack 68 CC EF B8 00 E8
+inc [counter]
+cmp [counter],number_of_attacks
+jl ForcedMagicAttack
+mov [counter],00
+
+Exit:
+popad
+jmp Return
+
+02051229:
+jmp Hook
+Return:
+
+0202607D:
+cmp eax,skill_ID
+
+020260A2:
+push skill_ID
+
+[DISABLE]
+02051229: //[FUNCTION START] 0F 84 ?? ?? ?? ?? 2B 9E ?? ?? ?? ?? 0F 88 ?? ?? ?? ?? 8B
+call 02098B30
+
+0202607D: //3D CC EF B8 00 75
+cmp eax,00B8EFCC
+
+020260A2: //68 CC EF B8 00 50
+push 00B8EFCC
+
+Dealloc(Hook)
+dealloc(Counter)
+dealloc(Timer)

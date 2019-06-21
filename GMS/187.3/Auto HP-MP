@@ -1,0 +1,76 @@
+[Enable]
+Alloc(Hook, 124)
+Alloc(HP, 4)
+Alloc(MP, 4)
+Label(Return)
+Label(UseHP)
+Label(UseMP)
+Label(End)
+
+HP:
+dd #100
+
+MP:
+dd #400
+
+Hook:
+mov eax,[02C5AAC8] // CWvsContext 8B 0D ? ? ? ? 50 E8 ? ? ? ? 8D ? ? E8 ? ? ? ? 8B
+mov eax,[eax+223C]
+push esi
+
+// Check HP
+mov esi,[eax+5A] // _ZtlSecureTear_nHP[1]
+rol esi,05
+xor esi,[eax+56] // _ZtlSecureTear_nHP[0]
+cmp esi, [HP] // HP Value
+jle UseHP
+
+// Check MP
+mov esi,[eax+72] // _ZtlSecureTear_nMP[1]
+rol esi, 05
+xor esi,[eax+6E] // _ZtlSecureTear_nMP[0]
+cmp esi, [MP] // MP Value
+jle UseMP
+jmp End
+
+UseHP:
+pushad
+mov ebx,002C0000 // Change Key For HP
+call PressKey
+popad
+jmp End
+
+UseMP:
+pushad
+mov ebx,002C0000 // Change Key For MP
+call PressKey
+popad
+
+End:
+pop esi
+push ebp // Original Opcode
+mov ebp,esp // Original Opcode
+push -01 // Original Opcode
+jmp Return
+
+PressKey:
+mov ecx,[02C5AAC8] // TSingletonCWvsContext 8B 0D ?? ?? ?? ?? 50 E8 ?? ?? ?? ?? 8D 4D ?? E8 ?? ?? ?? ?? 8B 4D ?? 64 89 0D ?? ?? ?? ?? 59
+mov ecx,[esi+A4]
+push ebx
+push 00
+call 02142A30 // CWndMan::OnKey 55 8B EC 8B 0D ?? ?? ?? ?? 85 C9 74 ?? 83 C1 ?? [First]
+ret
+
+00F79890: // CField::Update02142A10
+jmp Hook
+Return:
+
+[Disable]
+DeAlloc(Hook)
+DeAlloc(HP)
+DeAlloc(MP)
+
+00F79890: //[START] 3D B8 0B 00 00 76 ? 6A
+push ebp
+mov ebp,esp
+push -01

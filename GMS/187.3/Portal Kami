@@ -1,0 +1,277 @@
+[ENABLE]
+alloc(Hook,256)
+alloc(GetPortal,256)
+alloc(FakePortal,128)
+alloc(Portal,128)
+label(NextPortal)
+label(Return)
+label(Ending)
+label(Next)
+label(Exit)
+label(TopLeftTeleport)
+
+alloc(PressKey,128)
+
+alloc(GetMobXY,512)
+label(GetMobXYFalse)
+label(GetMobXYTrue)
+label(NextMob)
+
+alloc(PortalTeleport,128)
+
+alloc(Loot,128)
+alloc(GetItemXY,128)
+alloc(ItemX,4)
+alloc(ItemY,4)
+alloc(IsLooting,1)
+alloc(LootWhen,4)
+label(NoLoot)
+label(ClearIsLooting)
+
+define(Kami_LootWhen,#20)
+
+LootWhen:
+dw Kami_LootWhen
+
+IsLooting:
+db 0
+
+PressKey:
+mov esi,[02C5AAC8] // TSingletonCWvsContext: 8B 0D ? ? ? ? 50 E8 ? ? ? ? 8D 4D ? E8 ? ? ? ? 8B
+mov ecx,[esi+A4]
+push edx
+push 00
+call 02142A30 // CWndMan::OnKey: 55 8B EC 8B 0D ? ? ? ? 85 C9 74 ? 83 C1 [First result]
+ret
+
+GetPortal:
+xor eax,eax
+xor edi,edi
+mov ecx,[02C74F94] // Original Opcode
+mov ecx,[ecx+04]
+jmp NextPortal
+
+NextPortal:
+cmp [ecx-04],eax
+jbe Exit
+mov esi,[ecx+eax*8+04]
+cmp [esi+1C],#999999999
+je Next
+inc edi
+cmp edi,00
+jb Next
+mov eax,esi
+ret
+
+Next:
+inc eax
+jmp NextPortal
+
+Exit:
+xor eax,eax
+ret
+
+GetMobXY:
+mov esi,[02C79838] // CMobPool: 8B 0D ? ? ? ? 8D 85 ? FF FF FF 6A 00 6A 00
+test esi,esi
+je GetMobXYFalse
+mov edx,[esi+10] // Mob Count
+test edx,edx
+je GetMobXYFalse
+mov esi,[esi+28] // Mob 1: 8B ? ? 89 ? ? 85 C0 0F 84 ? ? ? ? 0F 1F ? ? ? ? ? 8D ? ? ? E8 ? ? ? ? 83 ? ? 8B ? ? 8D
+test esi,esi
+je GetMobXYFalse
+mov edx,[esi+04] // Mob 2: 8B ? ? 8D ? ? 50 8B ? 89 ? ? E8 ? ? ? ? 8B ? ? 8B
+test edx,edx
+je GetMobXYFalse
+mov edx,[edx+020C] // Mob 3: 83 ? ? ? 00 00 00 0F 84 ? ? ? ? 83 ? ? ? ? ? FF [Second result]
+test edx,edx
+je GetMobXYFalse
+mov edx,[edx+34] // Mob 4: 8B ? ? 85 C0 75 ? 8B ? ? 89 ? ? 8B in SHAPE2D.DLL
+test edx,edx
+je GetMobXYFalse
+mov ebx,[edx+68] // Invisible Mob X: 8B ? ? 89 ? 8B ? ? 85 ? 74 ? 8B ? ? 89 ? 8B ? ? 85 ? 74 ? 8B ? ? 89 ? 8B ? ? 85 ? 74 ? 8B ? ? 89 ? 83 in SHAPE2D.DLL
+or ebx,[edx+6C] // Invisible Mob Y: Invisible Mob X + 0x04
+test ebx,ebx
+jne GetMobXYTrue
+mov esi,[esi-10] // Prev Mob
+test esi,esi
+je GetMobXYFalse
+
+NextMob:
+mov edx,[esi+18] // Next Mob
+test edx,edx
+je GetMobXYFalse
+mov edx,[edx+020C] // Mob 3: 83 ? ? ? 00 00 00 0F 84 ? ? ? ? 83 ? ? ? ? ? FF [Second result]
+test edx,edx
+je GetMobXYFalse
+mov edx,[edx+34] // Mob 4: 8B ? ? 85 C0 75 ? 8B ? ? 89 ? ? 8B in SHAPE2D.DLL
+test edx,edx
+je GetMobXYFalse
+mov ebx,[edx+68] // Invisible Mob X: 8B ? ? 89 ? 8B ? ? 85 ? 74 ? 8B ? ? 89 ? 8B ? ? 85 ? 74 ? 8B ? ? 89 ? 8B ? ? 85 ? 74 ? 8B ? ? 89 ? 83 in SHAPE2D.DLL
+or ebx,[edx+6C] // Invisible Mob Y: Invisible Mob X + 0x04
+test ebx,ebx
+jne GetMobXYTrue
+mov esi,[esi+04] // Mob 2: 8B ? ? 8D ? ? 50 8B ? 89 ? ? E8 ? ? ? ? 8B ? ? 8B
+test esi,esi
+je GetMobXYFalse
+jmp NextMob
+
+GetMobXYFalse:
+xor eax,eax
+ret
+
+GetMobXYTrue:
+lea eax,[edx+60] // Mob X: 89 ? ? 8B ? ? F2 ? ? ? ? F2 ? ? ? 89 in SHAPE2D.DLL
+ret
+
+PortalTeleport:
+mov [Portal+0C],edx
+mov [Portal+10],ebx
+call GetPortal
+test eax,eax
+je Ending
+mov edi,eax
+mov eax,[edi+24]
+mov ebx,[edi+04]
+push 00 // bool bAddAttackProc
+push 00 // int bForced
+push eax // const char *sTargetPortalName
+push ebx // const char *sPortalName
+push 00 // int nSLV
+push 00 // SKILLENTRY *pSkill
+mov ecx,[02C7352C] // CUserLocal *this: 8B 3D ? ? ? ? 8B CF F3
+call 01F969A0 // CUserLocal::TryRegisterTeleport: 55 8B EC 6A 00 6A 01 FF ? ? 6A 00 [Follow call]
+ret
+
+Hook:
+call 021A18E0 // Original Opcode
+pushad
+call GetMobXY
+test eax,eax
+je TopLeftTeleport
+cmp byte ptr [IsLooting], 1
+je Loot
+cmp dword ptr [LootWhen], #-1
+je NoLoot
+mov esi,[02C79FB4] // CDropPool: 8B ? ? ? ? ? ? FF ? ? ? 8B ? E8 ? ? ? ? B8
+mov esi,[esi+14] // Item Count
+cmp esi,dword ptr [LootWhen]
+jge Loot
+
+NoLoot:
+mov ebx,[eax+04]
+sub ebx,#25
+mov edx,[eax]
+sub edx,#70
+call PortalTeleport
+mov edx,001D0000 // CTRL Key
+call PressKey
+jmp Ending
+
+Loot:
+mov esi,[02C79FB4] // CDropPool: 8B ? ? ? ? ? ? FF ? ? ? 8B ? E8 ? ? ? ? B8
+mov esi,[esi+14] // Item Count
+cmp esi,0
+je ClearIsLooting
+mov byte ptr [IsLooting], 1
+pushad
+mov edx,002C0000 // Z Key
+call PressKey
+mov ebx,[ItemY]
+sub ebx,#-10 // Adjust to loot
+mov edx,[ItemX]
+call PortalTeleport
+popad
+jmp Ending
+
+ClearIsLooting:
+mov byte ptr [IsLooting], 0
+jmp Ending
+
+TopLeftTeleport:
+mov edx,[02C74028] // CWvsPhysicalSpace2D: 8B 0D ? ? ? ? 6A 01 6A 00 68
+mov edx,[edx+0C+00] // Left Wall Offset
+mov ebx,[02C74028] // CWvsPhysicalSpace2D: 8B 0D ? ? ? ? 6A 01 6A 00 68
+mov ebx,[ebx+0C+04] // Top Wall Offset
+call PortalTeleport
+
+Ending:
+popad
+jmp Return
+
+01F31DF9:
+jmp Hook
+Return:
+
+GetItemXY:
+cmp [esp],00F01FDB // Address below
+jne PtInRect
+push eax
+mov eax,[esp+0C]
+mov [ItemX],eax
+mov eax,[esp+10]
+mov [ItemY],eax
+pop eax
+jmp PtInRect
+
+02C7B9AC:
+dd GetItemXY
+
+FakePortal:
+lea edi,[Portal]
+jmp 01F96ECD // mov ecx,[edi+0C] below
+
+01F96EB7: // Fake Portal
+jmp FakePortal
+nop
+
+01F97028: // Block CClientSocket::SendPacket
+call 01FA1813 // Call any address with ret 0004 instruction
+
+01F96D85: // Skip Air/Rope Check
+db 90 90 90 90 90 90
+
+01F96A11: // Skip Air/Rope Check
+db 74
+
+01F96EFA: // Teleport Outside Boundary
+db 90 90 90 90 90 90
+
+[DISABLE]
+01F31DF9: // CUserLocal::Update: E8 ? ? ? ? 8B ? ? ? ? ? 8B ? ? 89 ? ? 85 ? 74 ? 83 ? ? 8D ? ? 50 FF 15 ? ? ? ? 85 ? 75 ? 8B ? ? ? ? ? 85 ? 74 ? C6 ? ? ? 8D ? ? ? FF 15 ? ? ? ? 85 ? 74 ? 8B ? 8B ? 6A 01 8B
+call 021A18E0
+
+02C7B9AC: // FF 15 ? ? ? ? 85 C0 75 ? 8D ? ? C7 ? ? ? ? ? ? E8 ? ? ? ? 8B
+dd PtInRect
+
+/* All the address below are part of CUserLocal::TryRegisterTeleport function */
+
+01F96EB7: // 8B 0D ? ? ? ? 50 E8 ? ? ? ? 8B F8 85 FF 0F 84 ? ? ? ? 8B ? ? 6A 01
+mov ecx,[02C74F94]
+
+01F97028: // E8 ? ? ? ? 8D 8D ? ? ? ? C7 ? ? FF FF FF FF E8 ? ? ? ? E9 ? ? ? ? 81 FE ? ? ? ? 74
+call 00E20710 // CClientSocket::SendPacket
+
+01F96D85: // 0F 8F ? ? ? ? 8B 8D ? ? ? ? 8D 85
+db 0F 8F 26 5F 00 00
+
+01F96A11: // 75 ? 8B ? E8 ? ? ? ? 85 C0 75 ? 8B ? ? ? ? ? 85 ? 0F [Second result] || first jne in CUserLocal::TryRegisterTeleport function
+db 75
+
+01F96EFA: // 0F 84 ? ? ? ? 8B ? ? ? ? ? 85 ? 0F 84 ? ? ? ? 8B ? ? ? ? ? ? E8 ? ? ? ? 85
+db 0F 84 B1 5D 00 00
+
+dealloc(Hook)
+dealloc(GetPortal)
+dealloc(FakePortal)
+dealloc(Portal)
+dealloc(PressKey)
+dealloc(GetMobXY)
+dealloc(PortalTeleport)
+dealloc(Loot)
+dealloc(GetItemXY)
+dealloc(ItemX)
+dealloc(ItemY)
+dealloc(IsLooting)
+dealloc(LootWhen)

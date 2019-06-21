@@ -1,0 +1,17 @@
+[ENABLE]
+alloc(Knockback,128)
+CreateThread(Knockback)
+
+// X Axis:
+// Left = -1066344448
+// Right = 1081139200
+Knockback:
+mov eax,[02C7352C] // CUserLocal: 8B 3D ? ? ? ? 8B CF F3
+mov eax,[eax+AA80] // Character Vector Control Offset: 8B 97 ? ? 00 00 6A 00 6A 00
+mov [eax+01F0+14],#-1066344448// Knockback Y Offset: Toggle Knockback + 0x14
+mov [eax+01F0+0C],#-1066344448  // Knockback X Offset: Toggle Knockback + 0x0C
+mov [eax+01F0+00],#01 // Toggle Knockback Offset: C7 ? ? ? 00 00 00 00 00 00 F2 ? ? ? ? E8 - 0x10 || C7 ? ? ? 00 00 01 00 00 00 76 - 0x10
+ret
+
+[DISABLE]
+dealloc(Knockback)

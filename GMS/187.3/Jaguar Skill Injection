@@ -1,0 +1,27 @@
+[ENABLE]
+alloc(Hook,128)
+
+Hook:
+call 02098B30 // Original Opcode
+pushad
+push 11 // int nAction
+push #33001016 // int nUserSkillID
+mov ecx,esi // CSummoned *this
+call 0153A9A0 // CSummoned::TryDoingJaguarSkill: 01 00 00 00 C6 80 [Start]
+popad
+jmp 0153D41E+5
+
+0153D41E:
+jmp Hook
+
+0153C130: // No Jaguar Suspend
+db 00
+
+[DISABLE]
+0153D41E: // CSummoned::Update: E8 ? ? ? ? 8B ? 8B ? ? ? ? ? 89 ? ? 85 ? 0F ? ? ? ? ? 33
+call 02098B30 // get_update_time
+
+0153C130: // 01 00 00 00 C6 80
+db 01
+
+dealloc(Hook)

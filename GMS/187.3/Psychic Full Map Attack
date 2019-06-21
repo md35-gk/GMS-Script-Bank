@@ -1,0 +1,21 @@
+define(CWvsPhysicalSpace2D,02C74028) //8B 0D ? ? ? ? 6A 01 6A 00 68
+define(PsychicLock_HitMob_Address,02044848) // E8 ? ? ? ? EB 03 8B ? ? 6A 00
+define(CMobPool__FindHitMobInRect,0130A0D0) //Original OP of address above
+
+[ENABLE]
+alloc(find_hit_mob_in_rect_hook,128)
+
+find_hit_mob_in_rect_hook:
+mov eax,[CWvsPhysicalSpace2D]
+lea eax,[eax+0C] // Left Wall Offset
+mov [esp+04],eax
+jmp CMobPool__FindHitMobInRect // Original call (CMobPool::FindHitMobInRect)
+
+PsychicLock_HitMob_Address:
+call find_hit_mob_in_rect_hook
+
+[DISABLE]
+dealloc(find_hit_mob_in_rect_hook)
+
+PsychicLock_HitMob_Address:
+call CMobPool__FindHitMobInRect

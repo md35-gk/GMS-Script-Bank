@@ -1,0 +1,46 @@
+[enable]
+alloc(BlockRecvHook,256)
+alloc(RecvList,512)
+label(RecvCheckLoop)
+label(BlockRecv)
+label(End)
+label(return)
+
+00F7B590:
+jmp BlockRecvHook
+nop
+return:
+
+BlockRecvHook:
+push ebp
+mov ebp, esp
+mov edx,[ebp+08]
+push eax
+mov eax, RecvList
+
+RecvCheckLoop:
+cmp edx, [eax]
+je BlockRecv
+cmp [eax], 00
+je End
+add eax, 04
+jmp RecvCheckLoop
+
+BlockRecv:
+xor edx, edx
+
+End:
+pop eax
+jmp return
+
+RecvList:
+dd 00 // End of list, add headers above
+
+[disable]
+00F7B590: //55 8B EC 8B 55 08 81 FA ?? ?? ?? ?? 0F 8F
+push ebp
+mov ebp,esp
+mov edx,[ebp+08]
+
+dealloc(BlockRecv)
+dealloc(RecvList)

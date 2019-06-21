@@ -1,0 +1,153 @@
+[ENABLE]
+alloc(PressKey,128)
+
+alloc(GetMobXY,128)
+alloc(MobX,4)
+alloc(MobY,4)
+
+alloc(Kami,128)
+label(KamiEnding)
+label(TopLeftTeleport)
+
+alloc(Teleport,128)
+
+alloc(KamiLoot,128)
+alloc(GetItemXY,128)
+alloc(ItemX,4)
+alloc(ItemY,4)
+alloc(IsLooting,1)
+alloc(LootWhen,4)
+label(NoLoot)
+label(ClearIsLooting)
+
+define(Kami_LootWhen,#20)
+
+LootWhen:
+dw Kami_LootWhen
+
+IsLooting:
+db 0
+
+PressKey:
+mov esi,[02C5AAC8] // TSingletonCWvsContext: 8B 0D ? ? ? ? 50 E8 ? ? ? ? 8D 4D ? E8 ? ? ? ? 8B
+mov ecx,[esi+A4]
+push edx
+push 00
+call 02142A30 // CWndMan::OnKey: 55 8B EC 8B 0D ? ? ? ? 85 C9 74 ? 83 C1 [First result]
+ret
+
+GetMobXY:
+mov [MobX],eax
+cvttsd2si eax,[edi+000000B8]
+mov [MobY],eax
+jmp 021140BC+8
+
+Teleport:
+mov esi,[02C7352C] // CUserLocal: 8B 3D ? ? ? ? 8B CF F3
+push ebx // Y
+push edx // X
+push [esi+AA80] // Character Vector Control Offset: 8B 97 ? ? 00 00 6A 00 6A 00
+call 02123D10 // CVecCtrl::raw_Move: E8 ? ? ? ? 85 ? 74 ? 6A 00 6A 03 [Third result & start]
+ret
+
+Kami:
+call 01237EC0 // Original Opcode
+pushad
+mov eax,[02C7352C] // CUserLocal: 8B 3D ? ? ? ? 8B CF F3
+test eax,eax
+je KamiEnding
+mov eax,[02C79838] // CMobPool: 8B 0D ? ? ? ? 8D 85 ? FF FF FF 6A 00 6A 00 [First result]
+cmp [eax+10],00
+je TopLeftTeleport
+cmp byte ptr [IsLooting], 1
+je KamiLoot
+cmp dword ptr [LootWhen], #-1
+je NoLoot
+mov esi,[02C79FB4] // CDropPool: 8B ? ? ? ? ? ? FF ? ? ? 8B ? E8 ? ? ? ? B8
+mov esi,[esi+14] // Item Count
+cmp esi,dword ptr [LootWhen]
+jge KamiLoot
+
+NoLoot:
+mov ebx,[MobY]
+sub ebx,#25
+mov edx,[MobX]
+sub edx,#70
+call Teleport
+mov edx,001D0000 // CTRL Key
+call PressKey
+jmp KamiEnding
+
+KamiLoot:
+mov esi,[02C79FB4] // CDropPool: 8B ? ? ? ? ? ? FF ? ? ? 8B ? E8 ? ? ? ? B8
+mov esi,[esi+14] // Item Count
+cmp esi,0
+je ClearIsLooting
+mov byte ptr [IsLooting], 1
+pushad
+mov edx,002C0000 // Z Key
+call PressKey
+mov ebx,[ItemY]
+mov edx,[ItemX]
+call Teleport
+popad
+jmp KamiEnding
+
+ClearIsLooting:
+mov byte ptr [IsLooting], 0
+jmp KamiEnding
+
+TopLeftTeleport:
+mov edx,[02C74028] // CWvsPhysicalSpace2D: 8B 0D ? ? ? ? 6A 01 6A 00 68
+mov edx,[edx+0C+00] // Left Wall Offset
+mov ebx,[02C74028] // CWvsPhysicalSpace2D: 8B 0D ? ? ? ? 6A 01 6A 00 68
+mov ebx,[ebx+0C+04] // Top Wall Offset
+call Teleport
+
+KamiEnding:
+popad
+jmp 00F798C5+5
+
+00F798C5:
+jmp Kami
+
+0211409C:
+jmp GetMobXY
+db 90 90 90
+
+GetItemXY:
+cmp [esp],00F01FDB // Address below
+jne PtInRect
+push eax
+mov eax,[esp+0C]
+mov [ItemX],eax
+mov eax,[esp+10]
+mov [ItemY],eax
+pop eax
+jmp PtInRect
+
+02C7B9AC:
+dd GetItemXY
+
+[DISABLE]
+00F798C5: // CField::Update: 3D B8 0B 00 00 76 ? 6A [Start then go below until first call or you can hook anywhere in CField::Update]
+call 01237EC0
+
+0211409C: // CVecCtrlMob::WorkUpdateActive: F2 ? ? ? ? ? 00 00 89 ? ? ? 00 00 8B
+db F2 0F 2C 87 B8 00 00 00
+
+02C7B9AC: // FF 15 ? ? ? ? 85 C0 75 ? 8D ? ? C7 ? ? ? ? ? ? E8 ? ? ? ? 8B
+dd PtInRect
+
+dealloc(PressKey)
+dealloc(GetMobXY)
+dealloc(MobX)
+dealloc(MobY)
+dealloc(Kami)
+dealloc(Teleport)
+dealloc(KamiLoot)
+dealloc(GetItemXY)
+dealloc(ItemX)
+dealloc(ItemY)
+dealloc(IsLooting)
+dealloc(LootWhen)
