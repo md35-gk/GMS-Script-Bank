@@ -1,0 +1,10 @@
+// Credits go to original creator (idk who it is sorry) and mitakass/Waty for updating till  v179
+// Updated by Lapeiro
+[ENABLE]
+02017518: //win32u.NtUserGetForegroundWindow first jne from function
+ret
+nop
+ 
+[DISABLE]
+02017518:
+db 75 03
