@@ -1,0 +1,39 @@
+[ENABLE]
+alloc(CUIAvatar__SelectCharacter_Hook,1024)
+alloc(StringPIC,40)
+
+StringPIC:
+db '000000' 00 //Put Pin in between' '
+
+CUIAvatar__SelectCharacter_Hook:
+push ebp
+mov ebp,esp
+sub esp,04
+
+push esi
+mov esi,[02D8BD28] // CLogin__GetInstance: 8B 3D ? ? ? ? 85 FF 0F 84 ? ? 00 00 8B ? ? 8D ? ? 68 ? ? ? ? FF 90 ? ? 00 00 85 C0 0F 84 ? ? 00 00 C7 45
+mov eax, #0 // Character Slot -1 (first char = 0, second char = 1, etc)
+mov [esi+4B4],eax //Character Slot Offset FF B0 ? ? 00 00 E8 ? ? ? ? 8B 85 ? ? ? ? C6 ? ? ? 85 C0 74 ? 8B
+push -01
+push StringPIC
+lea ecx,[ebp-04]
+call 00ADED50 // ZXString_char___ZXString_char__char_ E8 ? ? ? ? 6A 00 8D 8D ? ? FF FF C6 ? ? 96 [FOLLOW CALL]
+push eax
+lea ecx,[esi+608] //PIC Offset 8D 8F ? ? 00 00 E8 ? ? ? ? C7 87 ? ? 00 00 00 00 00 00 8D ? ? C6 ? ? 00 E8
+call 00657510 // ZXString_unsigned_char___operator_ [Address Below][Follow Call]
+lea ecx,[ebp-04]
+call 00B6BB90 // ZXString_char____ZXString_char_ //  E8 ? ? ? ? 8B 35 ? ? ? ? 8D ? ? 6A 00 6A  [SECOND][FOLLOW CALL]
+pop esi
+
+mov esp,ebp
+pop ebp
+ret 0004
+
+01231890:
+jmp CUIAvatar__SelectCharacter_Hook
+
+[DISABLE]
+01231890: // Follow Call Below: FF B0 ? ? 00 00 E8 ? ? ? ? 8B 85 ? ? ? ? C6 ? ? ? 85 C0 74 ? 8B
+push ebp
+mov ebp,esp
+push -01

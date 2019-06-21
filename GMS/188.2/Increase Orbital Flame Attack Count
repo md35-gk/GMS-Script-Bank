@@ -1,0 +1,19 @@
+[ENABLE]
+alloc(IncreaseOrbitalFlameAttackCount,128)
+
+IncreaseOrbitalFlameAttackCount:
+mov eax,0F
+mov [ebp-00001CE8],eax
+jmp return
+
+01FEB861:
+jmp IncreaseOrbitalFlameAttackCount
+db 90
+return:
+
+[DISABLE]
+01FEB861: //  89 85 ? ? ? ? 6A 0F 8B 95 ? ? ? ? ? E8
+mov [ebp-00001CE8],eax
+push 0F
+
+dealloc(IncreaseOrbitalFlameAttackCount)

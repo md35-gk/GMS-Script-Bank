@@ -1,0 +1,7 @@
+[ENABLE]
+00F5004F:
+db F2 0F 5E
+
+[DISABLE]
+00F5004F: // F2 ? ? ? ? ? ? ? 3B ? 7F
+db F2 0F 59

@@ -1,0 +1,8 @@
+define(DisablePetReturn, 021C0F66) // 74 ? FF 75 ? FF 75 ? 8D
+[ENABLE]
+DisablePetReturn:
+db EB
+
+[DISABLE]
+DisablePetReturn:
+db 74

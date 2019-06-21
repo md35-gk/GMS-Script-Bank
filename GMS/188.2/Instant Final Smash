@@ -1,0 +1,14 @@
+/*
+  Instant Final Psychic Smash
+  MooplerMasterRace
+  Created by OuterHaven
+*/
+define(FinalSmash,01FAD876) //  74 65 0F 1F ? ? 00 00 00 00
+
+[ENABLE]
+FinalSmash:
+db 75
+
+[DISABLE]
+FinalSmash:
+db 74

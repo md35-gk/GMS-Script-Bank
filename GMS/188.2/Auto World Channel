@@ -1,0 +1,25 @@
+[ENABLE]
+alloc(CLogin__OnRecommendWorldMessage_Hook,1024)
+label(CLogin__OnRecommendWorldMessage_Hook_callback)
+
+CLogin__OnRecommendWorldMessage_Hook:
+mov [esp],CLogin__OnRecommendWorldMessage_Hook_callback
+jmp 01223580 // CLogin__OnRecommendWorldMessage //original call
+
+CLogin__OnRecommendWorldMessage_Hook_callback:
+mov ecx,[02D8BD28] // CLogin__GetInstance: 8B 3D ? ? ? ? 85 FF 0F 84 ? ? 00 00 8B ? ? 8D ? ? 68 ? ? ? ? FF 90 ? ? 00 00 85 C0 0F 84 ? ? 00 00 C7 45
+push 00 // NULL
+push 00 // Channel
+push 00 // World [Scania = 00, Bera = 01, etc. 2D for Reboot]
+
+call 0121F4F3 // CLogin__SendLoginPacket: e8 ?? ?? ?? ?? 80 ? ?? ?? ?? ?? ?? 0f 85 ?? ?? ?? ?? 80 ? ? ? 00 00 00 0f 84  [function called]
+jmp 0121696D+5// Address Below Hook Address
+
+0121696D:
+call CLogin__OnRecommendWorldMessage_Hook
+
+[DISABLE]
+0121696D: // CLogin::OnPacket E8 ? CA 00 00 5D C2 08 00 FF [call to CLogin::OnRecommendWorldMessage]
+call 01223580 // OnRecommendWorldMessage
+
+dealloc(CLogin__OnRecommendWorldMessage_Hook)

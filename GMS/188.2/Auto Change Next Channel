@@ -1,0 +1,72 @@
+/**
+ * Change to Next Channel
+ * @author (YURI) FIVE
+ */
+
+// 56 8B 35 ? ? ? ? 85 F6 74 ? 8B ? 04 8D ? 04 68 ? ? ? ? FF 92 ? ? 00 00 85 C0 [SECOND]
+define(get_field,009132B0)
+// 55 8b ec 6a ff 68 ?? ?? ?? ?? 64 a1 ?? ?? ?? ?? 50 81 ec ?? ?? ?? ?? a1 ?? ?? ?? ?? 33 c5 89 45 f0 53 56 57 50 8d 45 f4 64 a3 ?? ?? ?? ?? 8b d9 89 5d d8 8b 43 04 8d 73
+define(CUserRemote__Update, 0210CF60)
+// 8B 0D ? ? ? ? 89 45 ? 85 C0 0F 84 [First]
+define(TSingletonCUserPool,02D88B6C)
+// 8B 0D ? ? ? ? 50 E8 ? ? ? ? 8D ? ? E8 ? ? ? ? 8B
+define(TSingletonCWvsContext,02D699CC)
+// 8B 0D ? ? ? ? 85 C9 74 ? E8 ? ? ? ? 8B 3D [FUNCTION START] [First]
+define(CField__SendTransferChannelRequest,00FCA3D0)
+
+[Enable]
+Alloc(CheckChannelCount,128)
+Alloc(RemoteUsers,4)
+Label(End)
+Label(Return)
+Label(ChangeChannel)
+Label(CheckRemoteUserCount)
+
+RemoteUsers:
+dd #1
+
+CUserRemote__Update:
+jmp CheckChannelCount
+Return:
+
+// Channel count offset in CWvsContext::GetChannelID()
+CheckChannelCount:
+mov eax, [TSingletonCWvsContext]
+mov eax, [eax+000021A0]
+inc eax
+cmp eax, #20
+jb CheckRemoteUserCount
+xor eax, eax
+jmp CheckRemoteUserCount
+
+// User count offset in CUserPool::GetRemoteUserCount()
+CheckRemoteUserCount:
+push ecx
+mov ecx, [TSingletonCUserPool]
+mov ecx, [ecx+0C+C]
+cmp ecx, [RemoteUsers]
+jae ChangeChannel
+jmp End
+
+ChangeChannel:
+push eax
+call get_field
+mov ecx,eax
+call CField__SendTransferChannelRequest
+
+End:
+pop ecx
+push ebp
+mov ebp,esp
+push -01
+jmp Return
+
+
+[Disable]
+CUserRemote__Update:
+push ebp
+mov ebp,esp
+push -01
+
+Dealloc(CheckChannelCount)
+Dealloc(RemoteUsers)

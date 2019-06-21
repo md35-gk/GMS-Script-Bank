@@ -1,0 +1,23 @@
+define(SpeedUp,013C1C95) //  83 ? ? 00 8D ? ? 89 83 ? ? 00 00 75 ? 8B
+[ENABLE]
+Alloc(MobSpeedUp, 128)
+Label(Return)
+
+MobSpeedUp:
+mov dword ptr [ebp+18],00
+cmp dword ptr [ebp+18],00
+lea edi,[ebx+28]
+jmp Return
+
+SpeedUp:
+jmp MobSpeedUp
+nop
+nop
+Return:
+
+[DISABLE]
+SpeedUp:
+cmp dword ptr [ebp+18],00
+lea edi,[ebx+28]
+
+DeAlloc(MobSpeedUp)

@@ -1,0 +1,16 @@
+[ENABLE]
+alloc(HitAvoidPeriod_Hook,128)
+
+HitAvoidPeriod_Hook:
+mov eax,#9999999999 // Set character blink time after hit in milliseconds
+jmp 02288B30+6
+
+02288B30:
+jmp HitAvoidPeriod_Hook
+db 90
+
+[DISABLE]
+02288B30: // E8 ? ? ? ? 8B ? ? ? ? ? 8B ? 6A 05 [Second result & follow call]
+mov eax,[ecx+8110]
+
+dealloc(HitAvoidPeriod_Hook)

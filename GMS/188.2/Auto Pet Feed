@@ -1,0 +1,87 @@
+define(KEY_NORMAL,0)
+define(KEY_EXTENDED,1)
+define(VK_HOME,24)
+define(FeedFullness,#100)
+define(FoodKey,VK_HOME)
+define(FoodKeyType,KEY_NORMAL)
+
+// CPet::Update - start of function 83 ?? ?? ?? ?? ?? ?? 89 ?? ?? 75 ?? 6A ?? 8D ?? ?? E8 ?? ?? ?? ??
+define(PetFullnessAddy,014C69D0)
+
+// E8 ? ? ? ? 5E C3 8B 0D ? ? ? ? 8D 46 04
+//define(TSingleton_CWndMan___ms_pInstance,02D82CB4)
+
+//55 8B EC 8B 0D ? ? ? ? 85 C9 74 ? 83 C1 04 8B 01 5D FF 20
+define(CWndMan__OnKey,021E8360)
+//E8 ? ? ? ? 85 C0 74 13 FF 70 ? 83 C0 ? 50 E8 ? ? ? ? 83 C4 08 0F [SECOND]
+define(GetRepleteness,014C5FC0)
+
+[Enable]
+alloc(PetFullnessHook,64)
+alloc(PressKey,128)
+label(DontFeed)
+define(KEY_PRESS,0)
+define(KEY_UP,1)
+define(MAPVK_VK_TO_VSC,0)
+
+PetFullnessAddy:
+jmp PetFullnessHook
+
+PetFullnessHook:
+push ecx
+call GetRepleteness // GetRepleteness E8 ? ? ? ? 85 C0 74 13 FF 70 ? 83 C0 ? 50 E8 ? ? ? ? 83 C4 08 0F [SECOND]
+pop ecx
+cmp eax,FeedFullness
+jg DontFeed
+
+push KEY_PRESS
+push FoodKeyType
+push FoodKey // virtual_key
+call PressKey
+
+DontFeed:
+push ebp
+mov ebp,esp
+push -01
+jmp PetFullnessAddy+5
+
+PressKey:
+push ebx
+push edx
+push esi
+push ecx
+
+mov edx, [esp+10+4]
+mov esi, [esp+10+8]
+mov ebx, [esp+10+C]
+mov ecx, edx
+
+push MAPVK_VK_TO_VSC
+push ecx
+call MapVirtualKeyA
+shl eax,#16
+shl esi,#24
+shl ebx,#31
+or eax, esi
+or eax, ebx
+mov ecx,eax
+
+push ecx
+push edx
+//mov ecx,[TSingleton_CWndMan___ms_pInstance]
+call CWndMan__OnKey
+
+pop ecx
+pop esi
+pop edx
+pop ebx
+ret 000C
+
+[Disable]
+PetFullnessAddy:
+push ebp
+mov ebp,esp
+push -01
+
+dealloc(PetFullnessHook)
+dealloc(PressKey

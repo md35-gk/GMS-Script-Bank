@@ -1,0 +1,22 @@
+// Mob Movement Offset: 83 BE ? ? ? ? 00 0F 85 ? ? 00 00 8B CE E8 ? ? ? ? 85 C0 74
+// Aggro Offset = Mob Movement Offset + 0x08
+// Assembly Scan:
+// mov eax,[ecx + Aggro Offset] -> mov eax,[ecx+00000428]
+
+[ENABLE]
+alloc(MobNoAggro,128)
+
+MobNoAggro:
+xor eax,eax
+mov [ecx+00000418],eax // Aggro Offset
+ret
+
+021BF830: // CVecCtrlMob::_GetChaseTarget
+jmp MobNoAggro
+db 90
+
+[DISABLE]
+021BF830: // 8B 81 ? ? 00 00 C3 CC CC CC CC CC CC CC CC CC 55 8B EC 56 8B F1 57 FF
+mov eax,[ecx+00000428]
+
+dealloc(MobNoAggro)

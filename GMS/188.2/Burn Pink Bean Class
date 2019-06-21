@@ -1,0 +1,19 @@
+[ENABLE]
+0122C630:
+mov eax,0
+ret
+
+[DISABLE]
+0122C630: //[Second Result] 55 8B EC 8B ? 08 3D C8 32 00 00 74 ?
+push ebp
+mov ebp,esp
+mov eax,[ebp+08]
+
+/*
+Technically this allows you to burn any class but only Pink Bean is restricted from this burning event.
+This is what I used for several of the "blocked" burning character releases like Kinesis and Blaster.
+
+1. Tick Script
+2. Create Pink Bean Character
+3. A burning prompt should pop up, click yes. 
+*/

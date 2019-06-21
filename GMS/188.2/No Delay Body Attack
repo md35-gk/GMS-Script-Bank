@@ -1,0 +1,45 @@
+//Works with Pink Bean, Aran(Body Pressure), etc use with Godmode Only
+[enable]
+alloc(time_stamp_hook,128)
+label(time_stamp_continue)
+
+alloc(time_stamp_initialized,4)
+alloc(time_stamp,4)
+
+time_stamp_initialized:
+dd 00000000
+
+time_stamp:
+dd 00000000
+
+0202BFA5:
+add edx,0
+db 90 90 90
+
+0202CC5B: // Fix timestamp-disconnect
+call time_stamp_hook
+
+time_stamp_hook:
+cmp [time_stamp_initialized],00000000
+jne time_stamp_continue
+call 0213CC30 // Original Opcode
+mov [time_stamp],eax
+mov [time_stamp_initialized],00000001
+time_stamp_continue:
+add [time_stamp], 3E8
+mov eax,[time_stamp]
+ret
+
+[disable]
+/* Addresses inside CUserLocal::TryDoingBodyAttack */
+
+0202BFA5: // 81 ? E8 03 00 00 89 95
+add edx,000003E8
+
+0202CC5B: // E8 ? ? ? ? 89 85 ? ? FF FF C7 85 ? ? ? ? 00 00 00 00 EB ? 8B 95 ? ? ? ? 83 [Fifth result]
+call 0213CC30 // get_update_time
+
+dealloc(time_stamp)
+dealloc(time_stamp_initialized)
+
+dealloc(time_stamp_hook)

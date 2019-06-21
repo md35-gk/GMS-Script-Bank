@@ -1,0 +1,118 @@
+[ENABLE]
+alloc(Hook,256)
+alloc(GetPortal,256)
+alloc(FakePortal,128)
+alloc(Portal,128)
+label(NextPortal)
+label(Return)
+label(Ending)
+label(Next)
+label(Exit)
+
+GetPortal:
+xor eax,eax
+xor edi,edi
+mov ecx,[02D8428C] // Original Opcode
+mov ecx,[ecx+04]
+jmp NextPortal
+
+NextPortal:
+cmp [ecx-04],eax
+jbe Exit
+mov esi,[ecx+eax*8+04]
+cmp [esi+1C],#999999999
+je Next
+inc edi
+cmp edi,00
+jb Next
+mov eax,esi
+ret
+
+Next:
+inc eax
+jmp NextPortal
+
+Exit:
+xor eax,eax
+ret
+
+Hook:
+call 02248420 // Original Opcode
+pushad
+mov ebx,[02D84270] // Mouse Base: 8B ? ? ? ? ? 8B ? E8 ? ? ? ? 85 ? 0F ? ? ? ? ? FF ? ? ? ? ? 2B
+//cmp dword ptr [ebx+AA0],0C // Mouse Animation Offset: 8B ? ? ? ? ? 8B ? ? 3B ? 0F ? ? ? ? ? 83 ? ? ? ? ? ? 0F
+//jne Ending
+mov ebx,[ebx+974] // Mouse Location: cmp dword ptr [esi+0000XXXX],00 below Mouse Animation Offset
+mov eax,[ebx+B0] // Mouse Y
+mov ebx,[ebx+AC] // Mouse X
+mov [Portal+0C],ebx
+mov [Portal+10],eax
+call GetPortal
+test eax,eax
+je Ending
+mov edi,eax
+mov eax,[edi+24]
+mov ebx,[edi+04]
+push 00
+push 00
+push eax
+push ebx
+push 00
+push 00
+mov ecx,[02D82708] // CUserLocal: 8B 3D ? ? ? ? 8B CF F3
+call 02030C40 // CUserLocal::TryRegisterTeleport: 55 8B EC 6A 00 6A 01 FF ? ? 6A 00 [Follow call]
+jmp Ending
+
+Ending:
+popad
+jmp Return
+
+FakePortal:
+lea edi,[Portal]
+jmp 02031189 // mov ecx,[edi+0C] below
+
+01FCAA96:
+jmp Hook
+Return:
+
+02031173: // Fake Portal
+jmp FakePortal
+nop
+
+020312E6: // Block CClientSocket::SendPacket
+call 00485CD0 // Call any address with ret 0004 instruction
+
+02031041: // Skip Air/Rope Check
+db 90 90 90 90 90 90
+
+02030CB7: // Skip Air/Rope Check
+db 74
+
+020311B8: // Teleport Outside Boundary
+db 90 90 90 90 90 90
+
+[DISABLE]
+01FCAA96: // CUserLocal::Update: E8 ? ? ? ? 8B ? ? ? ? ? 8B ? ? 89 ? ? 85 ? 74 ? 83 ? ? 8D ? ? 50 FF 15 ? ? ? ? 85 ? 75 ? 8B ? ? ? ? ? 85 ? 74 ? C6 ? ? ? 8D ? ? ? FF 15 ? ? ? ? 85 ? 74 ? 8B ? 8B ? 6A 01 8B
+call 02248420
+
+/* All the address below are part of CUserLocal::TryRegisterTeleport function */
+
+02031173: // 8B 0D ? ? ? ? 50 E8 ? ? ? ? 8B F8 85 FF 0F 84 ? ? 00 00 8B ? 0C
+mov ecx,[02D8428C]
+
+020312E6: // E8 ? ? ? ? 8D 8D ? ? ? ? C7 ? ? FF FF FF FF E8 ? ? ? ? E9 ? ? ? ? 81 FE ? ? ? ? 74
+call 00E20710 // CClientSocket::SendPacket
+
+02031041: // 0F 8F ? ? ? ? 8B 8D ? ? ? ? 8D 85
+db 0F 8F 26 5F 00 00
+
+02030CB7: // 75 ? 8B ? E8 ? ? ? ? 85 C0 75 ? 8B ? ? ? ? ? 85 ? 0F [Second result] || first jne in CUserLocal::TryRegisterTeleport function
+db 75
+
+020311B8: // 0F 84 ? ? ? ? 8B ? ? ? ? ? 85 ? 0F 84 ? ? ? ? 8B ? ? ? ? ? ? E8 ? ? ? ? 85
+db 0F 84 FE 5F 00 00
+
+dealloc(Hook)
+dealloc(GetPortal)
+dealloc(FakePortal)
+dealloc(Portal)

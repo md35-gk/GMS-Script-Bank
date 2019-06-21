@@ -1,0 +1,43 @@
+[Enable]
+Alloc(Hook, 124)
+Alloc(HP, 4)
+Alloc(MP, 4)
+Label(Return)
+RegisterSymbol(HP)
+RegisterSymbol(MP)
+
+Hook:
+////// HP /////
+mov eax,[02D699CC] // CWvsContext  mov ecx, above 8D ?? ?? 53 56 57 50 E8 ?? ?? ?? ??
+mov eax,[eax+2240] // ZRef<CharacterDat a> Aob from above, follow call below
+push esi
+mov esi,[eax+5A] // _ZtlSecureTear_nHP[1]
+rol esi,05
+xor esi,[eax+56] // _ZtlSecureTear_nHP[0]
+mov [HP], esi
+////// MP /////
+mov esi,[eax+72] // _ZtlSecureTear_nMP[1]
+rol esi, 05
+xor esi,[eax+6E] // _ZtlSecureTear_nMP[0]
+mov [MP], esi
+pop esi
+push ebp
+mov ebp,esp
+push -01
+jmp Return
+
+00FC1A60: //CField::Update
+jmp Hook
+Return:
+
+[Disable]
+DeAlloc(Hook)
+DeAlloc(HP)
+DeAlloc(MP)
+UnRegisterSymbol(HP)
+UnRegisterSymbol(MP)
+
+//2B 87 ? ? 00 00 3D B8 0B 00 00 76 [FUNCTION START]
+00FC1A60: //55 8B EC 6A FF 68 ? ? ? ? 64 A1 ? ? ? ? 50 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 F0 56 57 50 8D 45 F4 64 A3 ? ? ? ? 8B F9 89 7D 84
+push ebp
+mov ebp,esp

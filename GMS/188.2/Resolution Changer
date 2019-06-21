@@ -1,0 +1,60 @@
+[ENABLE]
+alloc(ResolutionChanger, 128)
+label(AlreadyChanged)
+alloc(height,4)
+alloc(width,4)
+registersymbol(height)
+registersymbol(width)
+
+alloc(IntersectRectAddy,4)
+alloc(ResolutionChangerAddy,4)
+
+IntersectRectAddy:
+dd USER32.IntersectRect
+
+ResolutionChangerAddy:
+dd ResolutionChanger
+
+width:
+dd #1800
+
+height:
+dd #700
+
+ResolutionChanger:
+pushad
+mov edi,[02D699CC]  // follow first call from the function below
+mov eax, [edi+7DE0] // do above and follow the jmp after pointer
+cmp eax, [width]
+je AlreadyChanged
+mov eax,[edi+7DE0+4]
+cmp eax,[height]
+je AlreadyChanged
+mov ecx, [height]
+mov edx, [width]
+push 00
+push ecx
+push edx
+mov ecx,edi
+call 0227EF80 //  55 8b ec 51 53 57 89 ? ? E8 ? ? ? ? 8B ? 08
+//68 58 02 00 00 68 20 03 00 00 8B 0D ? ? ? ? E8 [FOLLOW CALL BELOW]
+
+AlreadyChanged:
+popad
+jmp dword ptr [IntersectRectAddy]
+
+021E8665:
+call dword ptr [ResolutionChangerAddy]
+
+[DISABLE]
+dealloc(ResolutionChanger)
+dealloc(heigh)
+dealloc(width)
+dealloc(IntersectRectAddy)
+dealloc(ResolutionChangerAddy)
+unregistersymbol(height)
+unregistersymbol(width)
+
+
+021E8665: //  [3RD RESULT] FF 15 ? ? ? ? 85 C0 0F 84 ? ? 00 00 51 8B ?
+call dword ptr [02C7B9D0]

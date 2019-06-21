@@ -1,0 +1,7 @@
+[ENABLE]
+00B9EAEF:
+db EB
+
+[DISABLE]
+00B9EAEF: // 75 ? E8 ? ? ? ? 0F ? ? 85 [First result]
+db 75

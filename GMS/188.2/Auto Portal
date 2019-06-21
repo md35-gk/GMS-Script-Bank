@@ -1,0 +1,7 @@
+[ENABLE]
+0204C20A:
+db 90 90
+
+[DISABLE]
+0204C20A:// CUserLocal::TryPassiveTransferField: 74 ? 8D ? ? ? ? ? E8 ? ? ? ? 85 ? 75 ? 8B ? E8 [Fourth result]
+db 74 4B
