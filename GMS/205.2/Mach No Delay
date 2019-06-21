@@ -1,0 +1,9 @@
+define(MachGND,02727689)//75 ? 83 BD ? ? FF FF 00 75 ? 8B
+//75 31 83 BD ? ? ? ? 00 75 28 8B ? ? ? 8B ? ? ? ? ? ? 8B ? ? ? ? ? 50
+[enable]
+MachGND: //Mach GND (Melee/Basic attacks)
+db EB
+
+[disable]
+MachGND:
+db 75

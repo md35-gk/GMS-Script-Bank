@@ -1,0 +1,23 @@
+[ENABLE]
+RegisterSymbol(Item_ID)
+Alloc(GetItemID, 128)
+Alloc(Item_ID, 04)
+Label(return)
+
+GetItemID:
+mov [Item_ID],edi
+mov [ebx+00016800],edi
+jmp return
+
+026FD202:
+jmp GetItemID
+nop
+return:
+
+[DISABLE]
+026FD202: // 89 ? ? ? ? ? BE ? 00 00 00 E8 ? ? ? ? 89
+mov [ebx+00016800],edi
+
+UnRegisterSymbol(Item_ID)
+DeAlloc(GetItemID)
+DeAlloc(Item_ID)

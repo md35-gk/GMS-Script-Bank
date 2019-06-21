@@ -1,0 +1,31 @@
+// credits breadkiller
+// may be clientsided
+[ENABLE]
+alloc(hook,64)
+alloc(Original,64)
+
+02AD732F:
+jmp hook
+
+hook:
+cmp eax,04
+jne Original
+nop
+nop
+nop
+nop
+nop
+nop
+mov eax,00001000
+jmp 02AD88A4
+
+Original:
+cmp eax,000001B7
+ja 02AD88A4
+jmp dword ptr [eax*4+02AD8940]
+
+
+[DISABLE]
+02AD732F: //3D ? ? 00 00 0F 87 ? ? 00 00 FF 24 85 ? ? ? ? 56 8B CF E8 ? ? ? ? E9 ? ? ? ? 56 8B CF E8 ? ? ? ? E9 ? ? ? ?
+cmp eax,000001B7
+dealloc(hook)

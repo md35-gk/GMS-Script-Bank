@@ -1,0 +1,40 @@
+[ENABLE]
+alloc(hook,222)
+alloc(summon_familiar,128)
+label(ending)
+label(return)
+
+hook:
+pushad
+mov edi,[0385210C] //CUserlocal 8B 3D ? ? ? ?  8B CF F3
+mov edi,[edi+000166D4] //apFamiliar 8B 87 ? ? ? ? 8B ? ? 04 8B ? ?  89 ? ? 85
+cmp [edi+04],00 // Value = 0 when familiar is not summoned
+jne ending
+call summon_familiar
+ending:
+popad
+mov fs:[00000000],eax //Original OP
+jmp return
+
+summon_familiar: // 8B 0D ? ? ? ? 50 E8 ? ? ? ? 8D ? ? E8 ? ? ? ? 8B
+mov ecx,[0385213C]
+push %arg1 //Big Spider Familiar
+call 02B38880 //Call below using AOB above
+ret
+
+017FE668: //GenerateMovePath Function (script won't execute unless theres mobs)
+jmp hook
+nop
+return:
+
+02B38970: //Summon Familiar While Soaring
+db EB
+
+[DISABLE]
+dealloc(hook)
+
+017FE668: // 3D E4 69 88 00 B9 01 00 00 00 [SECOND FS BELOW FUNCTION START]
+mov fs:[00000000],eax
+
+02B38970: //74 ? 8B 80 ? ? ? ? 83 F8 01 74 ? 83 F8 02 75
+db 74

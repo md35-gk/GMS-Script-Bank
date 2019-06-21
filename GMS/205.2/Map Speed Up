@@ -1,0 +1,9 @@
+//warning: combining this with certain CPU hacks (e.g. no skill animations, ..) may cause auto bans!
+
+[enable]
+00CD4A67:
+db F2 0F 59
+
+[disable]
+00CD4A67: // F2 0F 5E ? ? ? ? ? 66 ? ? ? F2 ? ? ? ? ? [2nd]
+db F2 0F 5E

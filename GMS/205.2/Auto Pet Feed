@@ -1,0 +1,26 @@
+[ENABLE]
+02780E2B: //don't push the extra shit (pet index)
+db 90
+mov ecx,esi
+call 02AED0B0 //first [function start] : E8 ? ? ? ? E8 ? ? ? ? 83 ? ? 8B ? ? 64 89 0D 00 00 00 00 59 5F 5E 5B 8B E5 5D C2 08 00 68
+
+//patch out clientsided checks for pet feed skill
+//or: 2B ? ? ? ? ? 3D ? ? ? ? 0F 82 [LAST] JB BELOW
+02780D09:
+db 90 90 90 90 90 90
+
+//below under test di,ax
+02780D8E: //74 0C 8B CB E8 ? ? ? FF 83 F8 ? 7E
+db 90 90
+
+[DISABLE]
+02780E2B: //E8 ? ? ? ? 50 8B CE E8 ? ? ? ? 8B ? ? 64 ? ? ? ? ? ? 59 5F 5E 5B 8B E5 5D C3[Push eax below]
+push eax
+mov ecx,esi
+call 02AED2A0
+
+02780D09:
+db 0F 82 DC 01 00 00
+
+02780D8E:
+db 74 0C
