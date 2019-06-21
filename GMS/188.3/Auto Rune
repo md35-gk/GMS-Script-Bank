@@ -1,0 +1,42 @@
+[ENABLE]
+alloc(Hook,128)
+
+Hook:
+push ebp
+mov ebp,esp
+push -01
+pushad
+mov ebx,ecx // CRuneStoneMgrForClient: 8B 0D ? ? ? ? E8 ? ? ? ? 8B 0D ? ? ? ? E8 ? ? ? ? 8B 0D ? ? ? ? E8 ? ? ? ? 8B 0D ? ? ? ? E8 ? ? ? ? 8B ? E8
+mov ecx,ebx
+call 0152AB30 // CRuneStoneMgrForClient::NoticeInRect: E8 ? ? ? ? A1 ? ? ? ? 89 ? ? 85 C0 0F 84 [Fifth result & start]
+push 25 // Left arrow
+mov ecx,ebx
+call 0152B830 // CRuneStoneMgrForClient::KeyInput: 8B 0D ? ? ? ? 53 E8 ? ? ? ? 85 C0 75 ? 8B [Follow first call]
+push 26 // Up arrow
+mov ecx,ebx
+call 0152B830 // CRuneStoneMgrForClient::KeyInput: 8B 0D ? ? ? ? 53 E8 ? ? ? ? 85 C0 75 ? 8B [Follow first call]
+push 27 // Right arrow
+mov ecx,ebx
+call 0152B830 // CRuneStoneMgrForClient::KeyInput: 8B 0D ? ? ? ? 53 E8 ? ? ? ? 85 C0 75 ? 8B [Follow first call]
+push 28 // Down arrow
+mov ecx,ebx
+call 0152B830 // CRuneStoneMgrForClient::KeyInput: 8B 0D ? ? ? ? 53 E8 ? ? ? ? 85 C0 75 ? 8B [Follow first call]
+popad
+jmp 0152A3C0+5
+
+0152A3C0:
+jmp Hook
+
+02071490:
+db C3
+
+[DISABLE]
+0152A3C0: // CRuneStoneMgrForClient::Update: E8 ? ? ? ? 8B 0D ? ? ? ? 85 ? 74 ? ? E8 ? ? ? ? 8B 0D [Before last green result]
+push ebp
+mov ebp,esp
+push -01
+
+02071490: // CUserLocal::ResetRuneStoneActionAndSendFailPacket: 8B 0D ? ? ? ? 53 E8 ? ? ? ? 85 C0 75 ? 8B [Follow second call]
+db 55
+
+dealloc(Hook)
