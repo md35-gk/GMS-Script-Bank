@@ -1,0 +1,44 @@
+[enable]
+Alloc(Hook, 128)
+Alloc(ThreadEnv, 4)
+Label(Compare)
+Label(End)
+Label(Return)
+
+00E20700: // CClientSocket::SendPacket
+jmp Hook
+Return:
+
+ThreadEnv:
+dd #0
+
+Hook:
+push ebp
+mov ebp, esp
+mov eax,[ThreadEnv]
+test eax, eax
+jne Compare
+mov eax, fs:[00000018]
+mov [ThreadEnv], eax
+
+Compare:
+cmp fs:[00000018], eax
+je End
+mov eax,[ThreadEnv]
+mov fs:[00000018], eax
+
+End:
+pop ebp
+push ebp
+mov ebp,esp
+push -01
+jmp Return
+
+[disable]
+DeAlloc(Hook)
+DeAlloc(ThreadEnv)
+
+00E20700: // 55 8B EC 6A FF 68 ?? ?? ?? ?? 64 A1 ?? ?? ?? ?? 50 83 EC 5C A1 ?? ?? ?? ?? 33 C5 89 45 F0 53 56 57 50 8D 45 F4 64 A3 ?? ?? ?? ?? 89 4D C0
+push ebp
+mov ebp,esp
+push -01

@@ -1,0 +1,113 @@
+/*
+  Auto cube to userdefined tier
+  GMS v187.2
+  By Razz
+
+  - Known bugs/notes:
+  Keep your item in slot 1 or undefined shit might happen.
+  Keep the equip inventory selected while active.
+*/
+
+define(slot, 1) //slot your equip is in
+define(use_slots, #128) //number of slots in your use inventory
+define(delay, #1000)
+/*
+Tiers (well, simply HEX color codes):
+FFRRGGBB
+FF5CA1FF - Rare
+FFC261FF - Epic
+FFFFCC00 - Unique
+FF00FF00 - Legendary
+*/
+define(stop_tier, FF00FF00)
+[enable]
+alloc(cube_start_slot, 2)
+cube_start_slot:
+dw #9 //--- first slot your inventory has a cube in
+
+alloc(cube_hook, 256)
+label(return)
+label(exit)
+
+alloc(coutpacket_cube, 48)
+
+alloc(last_time, 4)
+last_time:
+dd 0
+
+alloc(_SendPacket,28)
+_SendPacket:
+mov ecx, [02C73578]
+lea eax,[coutpacket_cube]
+push eax
+push 014942B4
+jmp 00E20700
+ret
+
+00948882: //CItemInfo::DrawGradeFrame
+jmp cube_hook
+return:
+
+cube_hook:
+pushad
+call 02098B10 //get_update_time
+mov edx, eax
+sub edx, [last_time]
+cmp edx, delay
+jl exit
+mov [last_time], eax
+
+cmp [ebp+504], slot
+jne exit
+
+cmp ebx, stop_tier
+je exit
+
+mov eax, [cube_start_slot]
+mov edx, use_slots
+cmp eax, edx
+je exit
+
+push 123
+lea ecx, [coutpacket_cube]
+call 009F2C90 //coutpacket
+
+call rand
+mov edx, eax
+call 02098B10 //get_update_time
+add eax, edx
+push eax //rand+get_update_time
+lea ecx, [coutpacket_cube]
+call 007BB0C0 //encode4
+
+push [cube_start_slot]
+lea ecx, [coutpacket_cube]
+call 007F8AC0 //encode2
+
+push slot
+lea ecx, [coutpacket_cube]
+call 007F8AC0 //encode2
+
+call _SendPacket
+inc [cube_start_slot]
+
+exit:
+popad
+call 007BA2C0 //TSecType<long>::GetData(void)
+jmp return
+
+//to avoid the cube window
+01E84B49:
+db 90 e9
+
+[disable]
+00948882: //call below: ? 00 ff 00 ff 8d 4f ? e8
+call 007BA2C0
+
+01E84B49: //the je below: 83 c4 08 83 7d ? 00 c7 45 ? 00 00 00 00 0f 84 ? ? 00 00 8d
+db 0f 84
+
+dealloc(cube_hook)
+dealloc(coutpacket_cube)
+dealloc(cube_start_slot)
+dealloc(last_time)

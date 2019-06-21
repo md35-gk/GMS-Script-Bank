@@ -1,0 +1,52 @@
+[ENABLE]
+alloc(Turner,130)
+label(decval)
+label(incval)
+label(esn)
+label(TurnerRet)
+
+Turner:
+pushad
+mov eax,[02C7352C] // CUserLocal: 8B 3D ? ? ? ? 8B CF F3
+mov eax,[eax+AA80] // Character Vector Control Offset: 8B 97 ? ? 00 00 6A 00 6A 00 [Fourth result]
+lea ebx,[eax+0170] // Character Animation Offset: FF B6 ? ? 00 00 FF ? ? 8B [First result & substract 0x10]
+mov ecx,[ebx]
+cmp ecx,0a
+je incval
+cmp ecx,08
+je incval
+cmp ecx,06
+je incval
+cmp ecx,04
+je incval
+cmp ecx,02
+je incval
+cmp ecx,0b
+je decval
+cmp ecx,09
+je decval
+cmp ecx,07
+je decval
+cmp ecx,05
+je decval
+cmp ecx,03
+je decval
+esn:
+popad
+db 55 8B EC 8B 01
+jmp TurnerRet
+
+decval:
+dec [ebx]
+jmp esn
+incval:
+inc [ebx]
+jmp esn
+
+0200AF50: // CAntiRepeat::TryRepeat
+jmp Turner
+TurnerRet:
+
+[DISABLE]
+0200AF50: // 7E ? 83 ? ? 7D ? 8B ? ? 2B ? 3D [Start]
+db 55 8B EC 8B 01

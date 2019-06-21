@@ -1,0 +1,18 @@
+[ENABLE]
+//Thanks CJ
+alloc(find_hit_mob_in_rect_hook,128)
+
+find_hit_mob_in_rect_hook:
+mov eax,[02C74028] // CWvsPhysicalSpace2D: 8B 0D ? ? ? ? 6A 01 6A 00 68
+lea eax,[eax+0C] // Left Wall Offset
+mov [esp+04],eax
+jmp 0130A0C0 // Original call (CMobPool::FindHitMobInRect)
+
+01113C59: // Function:CForceAtom_NonTargetAttack::UpdateAttackCollision
+call find_hit_mob_in_rect_hook
+
+[DISABLE]
+01113C59: // E8 ? ? ? ? 89 ? ? ? ? ? ? ? ? ? ? ? FF 15 [First Result]
+call 0130A0C0
+
+dealloc(find_hit_mob_in_rect_hook)
