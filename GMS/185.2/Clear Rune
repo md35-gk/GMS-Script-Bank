@@ -1,0 +1,25 @@
+[Enable]
+Alloc(Hook, 124)
+Label(Return)
+
+Hook:
+push ecx
+mov ecx,[02B1E670] // CRuneStoneMgrForClient 8B 0D ? ? ? ? E8 ? ? ? ? 8B 0D ? ? ? ? E8 ? ? ? ? 8B CF E8 ? ? ? ? 8D 8F
+call 01428F20 // CRuneStoneMgrForClient::OnRuneStoneClear 8B 0D ? ? ? ? E8 ? ? ? ? 8B 0D ? ? ? ? E8 ? ? ? ? 8B CF E8 ? ? ? ? 8D 8F
+pop ecx
+push ebp
+mov ebp,esp
+push -01
+jmp Return
+
+00F1F2A0:
+jmp Hook
+Return:
+
+[Disable]
+DeAlloc(Hook)
+
+00F1F2A0: // CField::Update 55 8B EC 6A FF 68 ? ? ? ? 64 A1 ? ? ? ? 50 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 F0 56 57 50 8D 45 F4 64 A3 ? ? ? ? 8B F9 89 7D 84
+push ebp
+mov ebp,esp
+push -01

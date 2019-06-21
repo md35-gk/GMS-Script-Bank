@@ -1,0 +1,198 @@
+/*
+	v185.2 extreme cancer use on mob map
+	don't show the feminists
+*/
+define(brightness, #555) //up to 999
+[enable]
+alloc(hook, 3000)
+alloc(lol, 4)
+registersymbol(lol)
+label(return)
+
+lol:
+dd 0
+
+0125E281:
+jmp hook
+return:
+
+hook:
+mov [lol], ecx
+pushad
+push 0
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //blue
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //green
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //red
+mov ecx, [lol]
+call 0126FD70 //CMob::SetMobColor - singular mob
+//call 00F448B0 //CMobPool::SetMobColor - all mobs
+
+/*********************/
+
+push 0 //delay
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //blue
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //green
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //red
+call 00F44890 //CUserLocal::SetColor
+
+/*********************/
+
+push 0 //delay
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //blue
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //green
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //red
+call 00F44980 //CPortalList::SetColor
+
+/*********************/
+
+push 0 //delay
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //blue
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //green
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //red
+mov ecx, [02B1F87C]
+call 011DF910 //CMapLoadable::SetBackGroundColor
+
+/*********************/
+
+push 0 //delay
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //blue
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //green
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //red
+call 008C0D40 //get_field
+mov ecx, eax
+call 00F448D0 //CField::SetGenColor
+
+push 0 //delay
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //blue
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //green
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //red
+call 008C0D40 //get_field
+mov ecx, eax
+call 00F447D0 //CField::SetObjectColor
+
+/*********************/
+
+push 0 //could be npc id, it decode4's this value
+push 0 //delay
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //blue
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //green
+xor edx, edx
+call rand
+mov ebx, brightness
+div ebx
+push edx //red
+call 00F44880 //CNpcPool::SetColor
+
+/*********************/
+
+//use 00F44750 CField::SetColorChangeAll(999, 999, 999, 0)
+//to set everything as KKK white power
+
+/*********************/
+
+//more cancer goes here
+push 1 //bEnforceTremble
+push 0 //tAddEffectTime
+push 0 //i forgot what this is and at this point im too lazy to go look
+push 0 //bHeavyNShortTremble
+
+mov ecx, [02B1D700] //CConfig
+mov [ecx+1c], 1 //bEnforceTremble turn off the anti shake option in the config window
+
+mov ecx,[02B17CC8] //CAnimationDisplayer
+sub esp,08
+movsd xmm0,[02587E48] //30.0
+movsd [esp],xmm0 //dTrembleForce
+call 00C8C6D0 //CAnimationDisplayer::Effect_Tremble
+
+popad
+mov ecx, [lol]
+call 01236250 //CMobTemplate::_ZtlSecureGet_dwTemplateID
+jmp return
+
+[disable]
+0125E281:
+call 01236250
+
+dealloc(lol)
+dealloc(hook)

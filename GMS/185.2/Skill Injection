@@ -1,0 +1,64 @@
+[ENABLE]
+alloc(skill_id_hook,128)
+label(skill_id_return)
+label(normal)
+define(skill_id,#12120011)
+
+alloc(delay,4)
+
+delay:
+dw 00
+
+01F26DC5: //0F 84 ?? ?? ?? ?? 2B 9E ?? ?? ?? ?? 0F 88 ?? ?? ?? ?? 8B
+db 90 90 90 90 90 90
+
+01F26DD1: //JS Below
+db 90 90 90 90 90 90
+
+01F26DBE: //cmp dword ptr ABOVE
+jmp skill_id_hook
+nop
+nop
+skill_id_return:
+
+skill_id_hook:
+inc [delay]
+cmp [delay],#5
+jne normal
+mov [delay],00
+mov [esi+00012758],skill_id
+jmp skill_id_return
+normal:
+cmp dword ptr [esi+00012758],00
+jmp skill_id_return
+
+01F26E4A:  //0F 84 ? ? 00 00 8B 06 8B CE FF 50 ? 3D 10 27 00 00 74 ? 3D [SECOND RESULT]
+db 90 E9
+
+01F26FC3: //0F 87 ?? ?? ?? ?? 0F B6 ?? ?? ?? ?? ?? FF 24 ?? ?? ?? ?? ?? 84 DB 74 ?? 8B 8E ?? ?? ?? ?? 85 C9
+db 90 90 90 90 90 90
+
+01F26FD0: //Addres below or above aob
+jmp 01F27003 //81 BE ? ? ? ? E2 FE 7E 01
+dw 9090
+
+[Disable]
+01F26DC5: //0F 84 ?? ?? ?? ?? 2B 9E ?? ?? ?? ?? 0F 88 ?? ?? ?? ?? 8B
+db 0F 84 21 03 00 00
+
+01F26DD1: //JS Below
+db 0F 88 15 03 00 00
+
+01F26DBE: //cmp dword ptr above
+cmp dword ptr [esi+00012758],00
+
+01F26E4A: //0F 84 ? ? 00 00 8B 06 8B CE FF 50 ? 3D 10 27 00 00 74 ? 3D [SECOND RESULT]
+db 0F 84 F8 00 00 00
+
+01F26FC3: //0F 87 ?? ?? ?? ?? 0F B6 ?? ?? ?? ?? ?? FF 24 ?? ?? ?? ?? ?? 84 DB 74 ?? 8B 8E ?? ?? ?? ?? 85 C9
+db 0F 87 19 01 00 00
+
+01F26FD0: //Addres  Below Above
+jmp dword ptr [ecx*4+01F270F4]
+
+dealloc(skill_id_hook)
