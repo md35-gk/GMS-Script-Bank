@@ -1,0 +1,7 @@
+[ENABLE]
+02982416: //Mob Confuse
+db 90 90 90 90 90 90 
+
+[DISABLE]
+02982416: //0F 82 ? ? 00 00 EB 03 ? ? ? F2 [second]
+db 0F 82 7D 08 00 00

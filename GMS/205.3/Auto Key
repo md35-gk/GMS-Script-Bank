@@ -1,0 +1,55 @@
+[Enable]
+alloc(hook,128)
+alloc(PressKey,128)
+alloc(timer,4)
+label(update)
+label(return)
+define(Autokey, %arg1)
+define(delay, #%arg2)
+
+timer:
+dd 0
+
+hook:
+call GetTickCount
+mov edx,eax
+sub edx, [timer]
+cmp edx, delay // change delay here
+jl return
+mov [timer], eax
+pushad
+mov edx,Autokey // change key here
+call PressKey
+popad
+jmp return
+
+PressKey:
+mov esi,[0385213C] // TSingletonCWvsContext 8B 0D ?? ?? ?? ?? 50 E8 ?? ?? ?? ?? 8D 4D ?? E8 ?? ?? ?? ?? 8B 4D ?? 64 89 0D ?? ?? ?? ?? 59
+mov ecx,[esi+A4]
+push edx
+push 00
+call 02A658F0 // CWndMan::OnKey 55 8B EC 8B 0D ?? ?? ?? ?? 85 C9 74 ?? 83 C1 ?? [First]
+ret
+
+update:
+push 02E45A74 // Original opcode
+jmp return
+
+01382EC5: // CField::Update
+jmp hook
+return:
+
+[Disable]
+01382EC5: //3D B8 0B 00 00 76 ? 6A
+push 02E45A74
+db 64 A1 00 00 00 00
+
+dealloc(hook)
+dealloc(PressKey)
+
+/*
+Alternative hook into CMob::Update (only calls when in maps with mobs, useful if you get stuck in town while map rushing)
+
+017E9495: //68 ?? ?? ?? ?? 64 A1 00 00 00 00 50 81 ?? ?? ?? ?? ?? a1 ?? ?? ?? ?? 33 ?? 89 ? ? 53 56 57 50 8d ? ? 64 ? ? ? ? ? 8b ? 89 ? ? ? ? ? 33 c0  [second]
+push 02ED1AF8
+*/

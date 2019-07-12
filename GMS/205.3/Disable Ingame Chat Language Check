@@ -1,0 +1,16 @@
+// credits to kokose1234 for script and Pnandme for aobs
+
+[ENABLE]
+02A6A9C3:
+cmp dword ptr [ebp+08],01
+
+025FA308:
+db 90 90 90 90 90 90 90
+
+[DISABLE]
+02A6A9C3: // 83 7D 08 00 56 57 8B F9 74 46 FF 87 E8 01 00 00
+cmp dword ptr [ebp+08],00
+
+025FA308: // 74 0C 66 C7 06 20 20 B8 02 00 00 00 EB 1F 8A 06 [2nd last]
+je 025FA316
+mov word ptr [esi],2020

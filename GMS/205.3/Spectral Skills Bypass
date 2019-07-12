@@ -1,0 +1,26 @@
+//Moopler
+//Use with No skill CDs for full effect
+//bypasses certain requirements to use Ark spectral skills
+
+[Enable]
+02852270:
+mov eax,0
+ret
+
+02854D21: //Fatigue bypass
+db EB
+
+028542DE:// Height check removed for Gust Charge
+db EB
+
+[Disable]
+02852270: // 55 8B ec 8b 45 08 3d ? ? ? ? 7f ? 74 ? 3d ? ? ? ? 7f [2nd last]
+push ebp
+mov ebp,esp
+mov eax,[ebp+08]
+
+02854D21: // 7f 55 8d 45 f0 68 ? ? ? ? 50 e8 ? ? ? ? 8b c8
+db 7F
+
+028542DE: // 7d ? 68 ? ? ? ? 6a 0b 68 ? ? ? ? e8 ? ? ? ? 83 ? ? 32
+db 7D

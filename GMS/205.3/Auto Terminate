@@ -1,0 +1,36 @@
+[enable]
+//By DavHeed, ButterSmooth, at Moopler
+//auto kill maple when user enters field
+//threshold of people count is set on enable
+//aob updated by SunCat
+alloc(hook, 128)
+Label(skip)
+
+028657B0:
+jmp hook
+
+hook:
+cmp ebx,eax
+je skip
+pushad
+push 0
+push ffffffff
+call TerminateProcess
+test eax,eax
+popad
+jnz skip
+xor eax,eax
+div eax
+
+skip:
+jmp 0286587D //first je/jmp in CUserPool::OnUserEnterField
+
+[disable]
+028657B0:   //CUserPool::OnUserEnterField C6 ? ? 01 85 ? 74 ? ? 8B ? E8 ? ? ? ? EB [function start]
+push ebp
+mov ebp,esp
+push -01
+
+//cmp ebx,eax
+//je 0286587D  //first je/jmp in above function
+DeAlloc(hook)

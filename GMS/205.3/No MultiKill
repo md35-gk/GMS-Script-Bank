@@ -1,0 +1,7 @@
+[enable]
+0335E534:
+ret
+
+[disable]
+0335E534: // String search Effect/BasicEff.img/MultiKill/ [First]
+db 45

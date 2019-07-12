@@ -1,0 +1,39 @@
+//Moopler - OuterHaven
+/*
+  CMob::FallDown -   55 8B EC 83 EC 18 56 8B F1 E8 ? ? ? ? 85 C0 //
+  CMob::DragDown -   55 8B EC 83 EC ? A1 ? ? ? ? 33 C5 89 ? ? 53 56 57 8B D9 E8  // 1ST
+  CMob::ForcedDown - 55 8B EC 83 EC ? A1 ? ? ? ? 33 C5 89 ? ? 53 56 57 8B D9 E8  // 2ND
+*/
+
+[Enable]
+Alloc(Hook,128)
+Label(Return)
+Label(Original)
+Label(Exit)
+
+017FE950:
+jmp Hook
+Return:
+
+Hook:
+pushad
+mov edi,ecx
+call 017C6D80
+cmp eax,0098967F // Invisible Mob
+je Exit
+mov ecx,edi
+call 018143C0
+
+Exit:
+popad
+Original:
+push ebp
+mov ebp,esp
+push -01
+jmp Return
+
+[Disable]
+017FE950:
+push ebp
+mov ebp,esp
+push -01
